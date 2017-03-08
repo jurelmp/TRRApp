@@ -1,0 +1,31 @@
+/* 
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+/**
+ * Author:  JurelP
+ * Created: Feb 26, 2017
+ */
+
+CREATE TABLE accounts(
+    "ID" INTEGER NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
+    "CODE" CHAR(15) NOT NULL,
+    "NAME" VARCHAR(50) NOT NULL,
+    "DATE_CREATED" DATE NOT NULL,
+    "DATE_UPDATED" DATE NOT NULL);
+
+CREATE TABLE transactions(
+    "ACCOUNT_ID" INTEGER NOT NULL,
+    "ID" INTEGER NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
+    "REFERENCE_NO" VARCHAR(30) NOT NULL,
+    "DATE" DATE NOT NULL,
+    "PAYEE" VARCHAR(50) NOT NULL,
+    "AMOUNT" FLOAT NOT NULL,
+    "DESCRIPTION" VARCHAR(255),
+    "TYPE" VARCHAR(15), 
+    "IS_CLEAR" SMALLINT NOT NULL DEFAULT 0,
+    "DATE_CREATED" DATE NOT NULL,
+    "DATE_UPDATED" DATE NOT NULL,
+    FOREIGN KEY (ACCOUNT_ID)
+    REFERENCES ACCOUNTS (ID));
