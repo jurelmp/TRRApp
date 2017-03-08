@@ -18,11 +18,16 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.HeadlessException;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.Date;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JSplitPane;
 import javax.swing.WindowConstants;
@@ -84,9 +89,18 @@ public class MainFrame extends JFrame {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                Database.getInstance().shutdown();
-                dispose();
-                System.gc();
+
+                int option = JOptionPane.showConfirmDialog(
+                        MainFrame.this, 
+                        "Do you really want to exit the application?",
+                        "Confirm Exit",
+                        JOptionPane.OK_CANCEL_OPTION);
+                
+                if (option == JOptionPane.OK_OPTION) {
+                    Database.getInstance().shutdown();
+                    dispose();
+                    System.gc();
+                }
             }
             
         });
@@ -211,7 +225,39 @@ public class MainFrame extends JFrame {
     private JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
         
+        JMenu menuFile = new JMenu("File");
+        JMenuItem exitItem = new JMenuItem("Exit");
         
+        JMenu dataFile = new JMenu("Data");
+        JMenuItem backupItem = new JMenuItem("Backup");
+        JMenuItem restoreBackupItem = new JMenuItem("Restore");
+        
+        menuFile.add(exitItem);
+        dataFile.add(backupItem);
+        dataFile.add(restoreBackupItem);
+        
+        menuBar.add(menuFile);
+        menuBar.add(dataFile);
+        
+        exitItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                
+                int option = JOptionPane.showConfirmDialog(
+                        MainFrame.this, 
+                        "Do you really want to exit the application?",
+                        "Confirm Exit",
+                        JOptionPane.OK_CANCEL_OPTION);
+                
+                if (option == JOptionPane.OK_OPTION) {
+                    WindowListener[] listeners = getWindowListeners();
+                    
+                    for (WindowListener listener : listeners){
+                        listener.windowClosing(new WindowEvent(MainFrame.this, 0));
+                    }
+                }
+            }
+        });
         
         return menuBar;
     }
