@@ -5,13 +5,19 @@
  */
 package com.jp.gui;
 
+import com.jp.controller.MigrationAccountController;
+import com.jp.controller.MigrationTransactionController;
+import com.jp.model.Account;
+import com.jp.model.Transaction;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.List;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -45,17 +51,28 @@ public class MigrationDialog extends JDialog {
     
     private StringBuilder logsSB;
     
+    private MigrationAccountController accountController;
+    private MigrationTransactionController transactionController;
+    
+    private final String[] tableNames = {"accounts", "items"};
+    
     JButton browseButton, startButton;
     JTextField pathField;
     JTextArea logTextArea;
     private JPanel browsePanel, logPanel;
     private JFileChooser fileChooser;
+    private JComboBox tableNameComboBox;
     
     public MigrationDialog(JFrame parent) {
         super(parent, "Data Migration", true);
         setLayout(new BorderLayout());
         
+        accountController = new MigrationAccountController();
+        transactionController = new MigrationTransactionController();
+        
         logsSB = new StringBuilder();
+        
+        tableNameComboBox = new JComboBox(tableNames);
         
         browseButton = new JButton("Browse");
         startButton = new JButton("Start");
@@ -87,7 +104,18 @@ public class MigrationDialog extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String dbPath = pathField.getText().trim();
+                String selectedTable = (String) tableNameComboBox.getSelectedItem();
+                File file = fileChooser.getSelectedFile();
                 
+                if (dbPath != null && dbPath.length() > 0) {
+                    if (tableNames[0].equals(selectedTable)) {
+                        // accounts
+                        logData(accountController.importFromFile(file));
+                    } else if (tableNames[1].equals(selectedTable)) {
+                        // items / transactions
+                        logData(transactionController.importFromFile(file));
+                    }
+                }
             }
         });
         
@@ -103,6 +131,20 @@ public class MigrationDialog extends JDialog {
         setMinimumSize(dim);
         setSize(dim);
         setLocationRelativeTo(parent);
+    }
+    
+    void appendLog(String message) {
+        logTextArea.append(message + "\n");
+    }
+    
+    void logData(List<?> objects) {
+        for (Object obj : objects) {
+            if (obj instanceof Account) {
+                appendLog(((Account)obj).toString());
+            } else if (obj instanceof Transaction) {
+                appendLog(((Transaction)obj).toString());
+            }
+        }
     }
 }
 

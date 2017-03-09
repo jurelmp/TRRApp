@@ -1,7 +1,7 @@
 ----------------------------------------------------------------
-Thu Mar 09 22:07:27 SGT 2017:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.11.1.2 - (1629631): instance a816c00e-015a-b365-537d-000006567860 
-on database directory C:\Users\JurelP\Documents\NetBeansProjects\Transaction App\database\petrolog with class loader sun.misc.Launcher$AppClassLoader@6f496d9f 
+Fri Mar 10 01:56:55 SGT 2017:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.11.1.2 - (1629631): instance a816c00e-015a-b437-6af9-00000634fa18 
+on database directory C:\Users\JurelP\Documents\NetBeansProjects\Transaction App\database\petrolog with class loader sun.misc.Launcher$AppClassLoader@16b98e56 
 Loaded from file:/C:/Program%20Files/Java/jdk1.8.0_60/db/lib/derby.jar
 java.vendor=Oracle Corporation
 java.runtime.version=1.8.0_60-b27
@@ -11,9 +11,3 @@ os.arch=amd64
 os.version=10.0
 derby.system.home=null
 Database Class Loader started - derby.database.classpath=''
-----------------------------------------------------------------
-Thu Mar 09 22:08:39 SGT 2017: Shutting down Derby engine
-----------------------------------------------------------------
-Thu Mar 09 22:08:39 SGT 2017:
-Shutting down instance a816c00e-015a-b365-537d-000006567860 on database directory C:\Users\JurelP\Documents\NetBeansProjects\Transaction App\database\petrolog with class loader sun.misc.Launcher$AppClassLoader@6f496d9f 
-----------------------------------------------------------------
