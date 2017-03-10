@@ -5,13 +5,17 @@
  */
 package com.jp.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  *
  * @author JurelP
  */
-public class Account {
+public class Account implements Serializable {
+    
+    private static final long serialVersionUID = -8219218627533074108L;
+    
     private int id;
     private String code;
     private String name;

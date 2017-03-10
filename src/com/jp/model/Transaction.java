@@ -158,7 +158,7 @@ public class Transaction {
 
     @Override
     public String toString() {
-        return "Transaction{" + "id=" + id + ", reference=" + reference + ", payee=" + payee + ", desc=" + desc + ", date=" + date + ", amount=" + amount + ", type=" + type + ", clear=" + clear + ", dateCreated=" + dateCreated + ", dateUpdated=" + dateUpdated + '}';
+        return "Transaction{" + "accountId=" + accountId + ", id=" + id + ", reference=" + reference + ", payee=" + payee + ", desc=" + desc + ", date=" + date + ", amount=" + amount + ", type=" + type + ", clear=" + clear + ", dateCreated=" + dateCreated + ", dateUpdated=" + dateUpdated + '}';
     }
     
     

@@ -216,6 +216,7 @@ public class TransactionDAOImpl implements TransactionDAO{
     
     private Transaction extractData() throws SQLException {
         Transaction transaction = new Transaction();
+        transaction.setAccountId(resultSet.getInt(TransactionEntry.COL_ACCOUNT_ID));
         transaction.setId(resultSet.getInt(TransactionEntry.COL_ID));
         transaction.setReference(resultSet.getString(TransactionEntry.COL_REF_NO));
         transaction.setDate(resultSet.getDate(TransactionEntry.COL_DATE));
@@ -227,5 +228,16 @@ public class TransactionDAOImpl implements TransactionDAO{
         transaction.setDateCreated(resultSet.getDate(TransactionEntry.COL_DATE_CREATED));
         transaction.setDateUpdated(resultSet.getDate(TransactionEntry.COL_DATE_UPDATED));
         return transaction;
+    }
+
+    public List<Transaction> insertAll(List<Transaction> transactions) {
+        List<Transaction> temps = new ArrayList<>();
+        
+        for (Transaction transaction : transactions) {
+            int id = insertTransactionn(transaction);
+            temps.add(getTransactionById(id));
+        }
+        
+        return temps;
     }
 }

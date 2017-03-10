@@ -6,6 +6,7 @@
 package com.jp.controller;
 
 import com.jp.dao.MigrationTransactionDAOImpl;
+import com.jp.model.Item;
 import com.jp.model.Transaction;
 import java.io.File;
 import java.util.ArrayList;
@@ -32,13 +33,13 @@ public class MigrationTransactionController extends MigrationController {
         migrationDAO.exportToFile(file, objects);
     }
     
-    public List<Transaction> importFromFile(File file) {
-        List<Transaction> transactions = new ArrayList<>();
+    public List<Item> importFromFile(File file) {
+        List<Item> items = new ArrayList<>();
         LinkedList<Object> objects = migrationDAO.importFromFile(file);
         
         for (Object obj : objects) {
-            transactions.add((Transaction) obj);
+            items.add((Item) obj);
         }
-        return transactions;
+        return items;
     }
 }

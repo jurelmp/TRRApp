@@ -100,15 +100,17 @@ public class AccountDAOImpl implements AccountDAO{
                     " (" + AccountEntry.COL_CODE + ", " +
                     AccountEntry.COL_NAME + ", " +
                     AccountEntry.COL_DATE_CREATED + ", " +
-                    AccountEntry.COL_DATE_UPDATED + ") VALUES (?, ?, ?, ?)");
+                    AccountEntry.COL_DATE_UPDATED + ") VALUES (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, account.getCode());
             preparedStatement.setString(2, account.getName());
             preparedStatement.setDate(3, Utils.formatSqlDate(account.getDateCreated()));
             preparedStatement.setDate(4, Utils.formatSqlDate(account.getDateUpdated()));
             
             int result = preparedStatement.executeUpdate();
-            if (result > 0) {
-                account = getAccountByCode(account.getCode());
+            
+            ResultSet rs = preparedStatement.getGeneratedKeys();
+            if (rs.next()) {
+                account = getAccountById(rs.getInt(1));
             }
             
         } catch (SQLException ex) {
@@ -147,10 +149,11 @@ public class AccountDAOImpl implements AccountDAO{
     @Override
     public Account getAccountByCode(String code) {
         Account account = new Account();
+        boolean flag = false;
         try {
             preparedStatement = conn.prepareStatement("SELECT * FROM " + 
-                    AccountEntry.TABLE_NAME + " WHERE " + AccountEntry.COL_CODE + " = ?");
-            preparedStatement.setString(1, code);
+                    AccountEntry.TABLE_NAME + " WHERE " + AccountEntry.COL_CODE + " LIKE ?");
+            preparedStatement.setString(1,code + "%");
             resultSet = preparedStatement.executeQuery();
             
             if (resultSet.next()) {
@@ -159,6 +162,7 @@ public class AccountDAOImpl implements AccountDAO{
                 account.setName(resultSet.getString(AccountEntry.COL_NAME));
                 account.setDateCreated(resultSet.getDate(AccountEntry.COL_DATE_CREATED));
                 account.setDateUpdated(resultSet.getDate(AccountEntry.COL_DATE_UPDATED));
+                flag = true;
             }
             
         } catch (SQLException ex) {
@@ -170,7 +174,19 @@ public class AccountDAOImpl implements AccountDAO{
                 Logger.getLogger(AccountDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        return account;
+        return flag ? account : null;
+    }
+    
+    public List<Account> insertAll(List<Account> accounts) {
+        List<Account> temp = new ArrayList<>();
+        
+        for (Account account : accounts) {
+            if (getAccountByCode(account.getCode()) == null) {
+                temp.add(this.insertAccount(account));
+            }
+        }
+        
+        return temp;
     }
     
 }

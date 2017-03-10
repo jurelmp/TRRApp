@@ -57,5 +57,9 @@ public class TransactionController {
     public boolean removeTransaction(Transaction transaction) {
         return transactionDAOImpl.removeTransaction(transaction);
     }
+
+    public List<Transaction> insertAll(List<Transaction> transactions) {
+        return transactionDAOImpl.insertAll(transactions);
+    }
     
 }

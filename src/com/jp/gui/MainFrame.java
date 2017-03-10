@@ -10,7 +10,9 @@ import com.jp.controller.ReportController;
 import com.jp.controller.TransactionController;
 import com.jp.model.Account;
 import com.jp.model.Database;
+import com.jp.model.Item;
 import com.jp.model.Transaction;
+import com.jp.model.TransactionType;
 import com.jp.reports.GenerateReports;
 import com.jp.reports.OutputReports;
 import com.jp.utils.Utils;
@@ -24,7 +26,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -197,6 +201,49 @@ public class MainFrame extends JFrame {
             }
         });
         
+        migrationDialog.setMigrationListener(new MigrationListener() {
+            @Override
+            public void transactionsMigrated(List<Item> items) {
+                List<Transaction> transactions = new ArrayList<>();
+                
+                for (Item item : items) {
+                    Transaction temp = new Transaction();
+                    Account a = accountController.getAccountByCode(item.getBankCode());
+                    TransactionType type = item.getDeposit() == 0 ? TransactionType.payment : TransactionType.deposit;
+                    double amount = type == TransactionType.deposit ? item.getDeposit() : item.getPayment();
+                    temp.setReference(item.getRef());
+                    temp.setDate(item.getDate());
+                    temp.setPayee(item.getPayee());
+                    temp.setAmount(amount);
+                    temp.setDesc(null);
+                    temp.setType(type);
+                    temp.setClear(item.isClr());
+                    temp.setAccountId(a.getId());
+                    temp.setId(0);
+                    transactions.add(temp);
+                    System.out.println(a);
+                }
+                
+                transactions = transactionController.insertAll(transactions);
+                System.out.println(transactions.size() + " transactions inserted.");
+                for (Transaction transaction : transactions) {
+                    transactionsPanel.addRow(transaction);
+                    System.out.println(transaction);
+                }
+            }
+
+            @Override
+            public void accountsMigrated(List<Account> accounts) {
+                
+                accounts = accountController.insertAll(accounts);
+                System.out.println(accounts.size() + " accounts inserted.");
+                for (Account account : accounts) {
+                    accountsPanel.addRow(account);
+                    System.out.println(account);
+                }
+            }
+        });
+        
         accountsPanel.refresh();
         
         // Place the components to the frame
@@ -278,4 +325,28 @@ public class MainFrame extends JFrame {
         
         return menuBar;
     }
+    
+    /*
+    public final List<Transaction> castItems(List<Item> items) {
+        List<Transaction> t = new ArrayList<>();
+        
+        for (Item item : items) {
+            Transaction temp = new Transaction();
+            Account a = accountController.getAccountByCode(item.getBankCode());
+            TransactionType type = item.getDeposit() == 0 ? TransactionType.payment : TransactionType.deposit;
+            double amount = type == TransactionType.deposit ? item.getDeposit() : item.getPayment();
+            temp.setReference(item.getRef());
+            temp.setDate(item.getDate());
+            temp.setPayee(item.getPayee());
+            temp.setAmount(amount);
+            temp.setDesc(null);
+            temp.setType(type);
+            temp.setClear(item.isClr());
+            temp.setAccountId(a.getId());
+            temp.setId(0);
+            t.add(temp);
+        }
+        
+        return t;
+    } */
 }

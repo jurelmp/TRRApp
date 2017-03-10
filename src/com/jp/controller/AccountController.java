@@ -44,4 +44,8 @@ public class AccountController {
     public boolean removeAccount(int id) {
         return accountDAOImpl.removeAccount(id);
     }
+    
+    public List<Account> insertAll(List<Account> accounts) {
+        return accountDAOImpl.insertAll(accounts);
+    }
 }
