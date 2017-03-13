@@ -6,6 +6,7 @@
 package com.jp.gui;
 
 import com.jp.controller.AccountController;
+import com.jp.controller.BackupController;
 import com.jp.controller.ReportController;
 import com.jp.controller.TransactionController;
 import com.jp.model.Account;
@@ -57,6 +58,7 @@ public class MainFrame extends JFrame {
     private AccountController accountController;
     private TransactionController transactionController;
     private ReportController reportController;
+    private BackupController backupController;
     
     private MigrationDialog migrationDialog;
 
@@ -87,6 +89,7 @@ public class MainFrame extends JFrame {
         accountController = new AccountController();
         transactionController = new TransactionController();
         reportController = new ReportController();
+        backupController = new BackupController();
         
         loadAccounts();
         
@@ -332,7 +335,16 @@ public class MainFrame extends JFrame {
             }
         });
         
+        backupItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                createBackup();
+            }
+        });
+        
         migrationItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.CTRL_MASK));
+        backupItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.CTRL_MASK));
+        restoreBackupItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK));
         
         return menuBar;
     }
@@ -360,4 +372,11 @@ public class MainFrame extends JFrame {
         
         return t;
     } */
+    
+    private void createBackup() {
+        String backupDir = "backups/";
+        String backupVer = Utils.getDateNow().toString();
+        String fullPath = backupDir + backupVer;
+        backupController.createBackup(fullPath);
+    }
 }
