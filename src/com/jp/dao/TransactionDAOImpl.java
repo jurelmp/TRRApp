@@ -240,4 +240,20 @@ public class TransactionDAOImpl implements TransactionDAO{
         
         return temps;
     }
+    
+    public int clearTransaction(Transaction transaction) {
+        int rows = 0;
+        try {
+            preparedStatement = conn.prepareStatement("UPDATE " + TransactionEntry.TABLE_NAME +
+                    " SET " + TransactionEntry.COL_IS_CLEAR + " = ?" +
+                    " WHERE " + TransactionEntry.COL_ID + " = ?");
+            preparedStatement.setBoolean(1, transaction.isClear());
+            preparedStatement.setInt(2, transaction.getId());
+            rows = preparedStatement.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(TransactionDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return rows;
+    }
 }

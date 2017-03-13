@@ -62,4 +62,8 @@ public class TransactionController {
         return transactionDAOImpl.insertAll(transactions);
     }
     
+    public int clearTransaction(Transaction transaction) {
+        return transactionDAOImpl.clearTransaction(transaction);
+    }
+    
 }

@@ -34,6 +34,7 @@ public class TransactionsPanel extends JPanel {
     private TransactionsTableModel transactionsTableModel;
     
     private TransactionsSelectionListener transactionsSelectionListener;
+    private TransactionClearActionListener transactionClearActionListener;
     
     public TransactionsPanel() {
         setLayout(new BorderLayout());
@@ -61,11 +62,29 @@ public class TransactionsPanel extends JPanel {
                     if (transactionsSelectionListener != null) {
                         transactionsSelectionListener.transactionSelected(selected, transactionsTable.getSelectedRow());
                     }
-                    
-                    if (e.getValueIsAdjusting()) {
-                        // TODO 
+//                    System.out.println(e.getValueIsAdjusting());
+//                    if (e.getValueIsAdjusting()) {
+//                        // TODO 
+//                        System.out.println(e.getSource());
+//                        ListSelectionModel model = (ListSelectionModel) e.getSource();
+//                        
+//                    }
+                }
+            }
+        });
+        
+        transactionsTableModel.addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                if (transactionsTable.getSelectedRow() > -1) {
+                    Transaction selected = (Transaction) transactionsTableModel.getTransactionRow(transactionsTable.getSelectedRow());
+//                    System.out.println(selected);
+                    if (transactionClearActionListener != null) {
+                        transactionClearActionListener.valueChanged(selected);
+//                        refresh();
                     }
                 }
+                
             }
         });
         
@@ -94,6 +113,10 @@ public class TransactionsPanel extends JPanel {
     
     public void setTransactionsSelectionListener(TransactionsSelectionListener listener) {
         this.transactionsSelectionListener = listener;
+    }
+    
+    public void setTransactionClearActionListener(TransactionClearActionListener listener) {
+        this.transactionClearActionListener = listener;
     }
 
     public void rowDeleted(int rowIndex) {

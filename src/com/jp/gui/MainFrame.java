@@ -180,6 +180,14 @@ public class MainFrame extends JFrame {
             }
         });
         
+        transactionsPanel.setTransactionClearActionListener(new TransactionClearActionListener() {
+            @Override
+            public void valueChanged(Transaction transaction) {
+//                System.out.println(transaction);
+                transactionController.clearTransaction(transaction);
+            }
+        });
+        
         toolbar.setToolbarActionListener(new ToolbarActionListener() {
             @Override
             public void exportEventOccured() {
