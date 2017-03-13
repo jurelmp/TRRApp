@@ -11,6 +11,7 @@ import com.jp.model.TransactionType;
 import com.jp.utils.Utils;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -53,14 +54,15 @@ public class TransactionFormPanel extends JPanel implements ActionListener{
     private JXDatePicker datePicker;
     
     private DecimalFormat amountDecimalFormat;
-    
-    
+   
     private TransactionFormActionListener listener;
     private Account currentAccount;
     
     private Transaction currentTransaction;
     private boolean update = true;
     private int currentRowIndex;
+    
+    private final Font font = new Font(Font.SANS_SERIF, 0, 14);
     
     public TransactionFormPanel() {
         Dimension dim = getPreferredSize();
@@ -97,7 +99,7 @@ public class TransactionFormPanel extends JPanel implements ActionListener{
         amountLabel = new JLabel("Amount");
         actionLabel = new JLabel("Action");
         clearLabel = new JLabel("Clear");
-        descLabel = new JLabel("Description");
+        descLabel = new JLabel("Remarks (Optional)");
         // Fields
         transactionNoField = new JTextField(15);
         transactionNoField.setEnabled(false);
@@ -121,6 +123,7 @@ public class TransactionFormPanel extends JPanel implements ActionListener{
         descField = new JTextArea(5, 15);
         
         enableFields(false);
+        setFonts();
         
         // Listeners
 //        saveButton.addActionListener(new ActionListener() {
@@ -362,5 +365,17 @@ public class TransactionFormPanel extends JPanel implements ActionListener{
            enableButtons(true, false, false, false, false);
            clearFields();
        }
+    }
+    
+    private void setFonts() {
+        transactionNoField.setFont(font);
+        refField.setFont(font);
+        dateField.setFont(font);
+        payeeField.setFont(font);
+        amountField.setFont(font);
+        descField.setFont(font);
+        depositRdioBtn.setFont(font);
+        paymentRdioBtn.setFont(font);
+        clearCheckBox.setFont(font);
     }
 }

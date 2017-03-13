@@ -75,6 +75,24 @@ public class TransactionsTableModel extends AbstractTableModel {
         }
         return this.getValueAt(0, columnIndex) == null ? Object.class : getValueAt(0, columnIndex).getClass();
     }
+
+    @Override
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+        switch (columnIndex) {
+            case 6:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    @Override
+    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+//        super.setValueAt(aValue, rowIndex, columnIndex);
+        Transaction transaction = transactions.get(rowIndex);
+        transaction.setClear((Boolean) aValue);
+        fireTableCellUpdated(rowIndex, columnIndex);
+    }
     
     public void setData(List<Transaction> transactions) {
         this.transactions = transactions;

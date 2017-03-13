@@ -17,6 +17,9 @@ import javax.swing.ListSelectionModel;
 import javax.swing.border.Border;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.TableModel;
 
 /**
  *
@@ -57,6 +60,10 @@ public class TransactionsPanel extends JPanel {
                     
                     if (transactionsSelectionListener != null) {
                         transactionsSelectionListener.transactionSelected(selected, transactionsTable.getSelectedRow());
+                    }
+                    
+                    if (e.getValueIsAdjusting()) {
+                        // TODO 
                     }
                 }
             }
