@@ -108,6 +108,7 @@ public class TransactionsTableModel extends AbstractTableModel {
     }
 
     public void rowDeleted(int rowIndex) {
+        fireTableRowsDeleted(rowIndex, rowIndex);
         this.transactions.remove(rowIndex);
     }
     

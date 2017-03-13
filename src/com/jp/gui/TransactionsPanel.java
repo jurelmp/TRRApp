@@ -19,7 +19,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import javax.swing.table.TableModel;
 
 /**
  *
@@ -121,6 +120,11 @@ public class TransactionsPanel extends JPanel {
 
     public void rowDeleted(int rowIndex) {
         transactionsTableModel.rowDeleted(rowIndex);
+        clearSelection();
         refresh();
+    }
+    
+    public void clearSelection() {
+        transactionsTable.clearSelection();
     }
 }

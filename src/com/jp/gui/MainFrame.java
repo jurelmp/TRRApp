@@ -121,6 +121,7 @@ public class MainFrame extends JFrame {
             public void accountSelected(Account account) {
                 accountFormPanel.setAccountForm(account);
                 transactionsPanel.setAccount(account);
+                transactionsPanel.clearSelection();
                 transactionFormPanel.setAccount(account);
                 transactionsPanel.setData(transactionController.getTransactions(account));
             }
@@ -168,6 +169,8 @@ public class MainFrame extends JFrame {
                     if (option == JOptionPane.OK_OPTION) {
                         transactionController.removeTransaction(transaction);
                         transactionsPanel.rowDeleted(rowIndex);
+                        
+//                        transactionsPanel.refresh();
                     }
                 }
             }

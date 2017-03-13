@@ -355,6 +355,7 @@ public class TransactionFormPanel extends JPanel implements ActionListener{
        } else if (clicked == removeButton) {
            if (listener != null) {
                listener.buttonRemoveClicked(currentTransaction, currentRowIndex);
+               
                enableButtons(true, false, false, false, false);
            }
            enableFields(false);
