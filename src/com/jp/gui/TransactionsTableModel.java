@@ -6,6 +6,7 @@
 package com.jp.gui;
 
 import com.jp.model.Transaction;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
@@ -15,11 +16,14 @@ import javax.swing.table.AbstractTableModel;
  */
 public class TransactionsTableModel extends AbstractTableModel {
     
-    private List<Transaction> transactions;
-    private String[] columnNames = {"#", "REF", "DATE", "PAYEE", "AMOUNT", "DESC", "TYPE", "CLEAR"};
+    private List<Transaction> transactions = new ArrayList<>();
+    private String[] columnNames = {"#", "REF", "DATE", "PAYEE", "AMOUNT", "TYPE", "CLEAR"};
 
     @Override
     public int getRowCount() {
+//        if (transactions == null || transactions.isEmpty()) {
+//            return -1;
+//        }
         return transactions.size();
     }
 
@@ -30,6 +34,9 @@ public class TransactionsTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
+        if (transactions == null || transactions.isEmpty()) {
+            return null;
+        }
         Transaction transaction = transactions.get(rowIndex);
         switch (columnIndex) {
             case 0:
@@ -43,10 +50,8 @@ public class TransactionsTableModel extends AbstractTableModel {
             case 4:
                 return transaction.getAmount();
             case 5:
-                return transaction.getDesc();
-            case 6:
                 return transaction.getType();
-            case 7:
+            case 6:
                 return transaction.isClear();
         }
         return transaction;
@@ -59,15 +64,16 @@ public class TransactionsTableModel extends AbstractTableModel {
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
+        
         switch (columnIndex) {
             case 0:
                 return Integer.class;
             case 4:
                 return Double.class;
-            case 7:
+            case 6:
                 return Boolean.class;
         }
-        return Object.class;
+        return this.getValueAt(0, columnIndex) == null ? Object.class : getValueAt(0, columnIndex).getClass();
     }
     
     public void setData(List<Transaction> transactions) {

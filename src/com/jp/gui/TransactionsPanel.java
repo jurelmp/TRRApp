@@ -43,6 +43,7 @@ public class TransactionsPanel extends JPanel {
         transactionsTable = new JTable(transactionsTableModel);
         transactionsTable.setRowHeight(20);
         transactionsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        transactionsTable.setAutoCreateRowSorter(true);
         
         // Listeners
         transactionsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
@@ -71,6 +72,7 @@ public class TransactionsPanel extends JPanel {
     
     public void setData(List<Transaction> transactions) {
         transactionsTableModel.setData(transactions);
+//        transactionsTable.repaint();
         this.refresh();
     }
     

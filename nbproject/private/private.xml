@@ -3,17 +3,7 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/JurelP/Documents/NetBeansProjects/Transaction%20App/src/com/jp/dao/MigrationTransactionDAOImpl.java</file>
-            <file>file:/C:/Users/JurelP/Documents/NetBeansProjects/Transaction%20App/src/com/jp/controller/MigrationAccountController.java</file>
-            <file>file:/C:/Users/JurelP/Documents/NetBeansProjects/Transaction%20App/src/com/jp/controller/AccountController.java</file>
-            <file>file:/C:/Users/JurelP/Documents/NetBeansProjects/Transaction%20App/src/com/jp/dao/TransactionDAOImpl.java</file>
-            <file>file:/C:/Users/JurelP/Documents/NetBeansProjects/Transaction%20App/src/com/jp/controller/MigrationTransactionController.java</file>
-            <file>file:/C:/Users/JurelP/Documents/NetBeansProjects/Transaction%20App/src/com/jp/model/Item.java</file>
-            <file>file:/C:/Users/JurelP/Documents/NetBeansProjects/Transaction%20App/src/com/jp/controller/TransactionController.java</file>
-            <file>file:/C:/Users/JurelP/Documents/NetBeansProjects/Transaction%20App/src/com/jp/gui/MigrationDialog.java</file>
-            <file>file:/C:/Users/JurelP/Documents/NetBeansProjects/Transaction%20App/src/com/jp/gui/MigrationListener.java</file>
             <file>file:/C:/Users/JurelP/Documents/NetBeansProjects/Transaction%20App/src/com/jp/gui/MainFrame.java</file>
-            <file>file:/C:/Users/JurelP/Documents/NetBeansProjects/Transaction%20App/src/com/jp/dao/AccountDAOImpl.java</file>
         </group>
     </open-files>
 </project-private>
