@@ -74,7 +74,7 @@ public class MainFrame extends JFrame {
         transactionFormPanel = new TransactionFormPanel();
         leftPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, accountFormPanel, accountsPanel);
         leftPane.setOneTouchExpandable(true);
-        leftPane.setDividerLocation(transactionFormPanel.getPreferredSize().height);
+        leftPane.setDividerLocation(accountFormPanel.getMinimumSize().height);
         rightPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, transactionsPanel,transactionFormPanel);
         rightPane.setOneTouchExpandable(true);
         setRightPaneDividerLocation();
@@ -193,7 +193,7 @@ public class MainFrame extends JFrame {
                 if (option == JOptionPane.OK_OPTION) {
                     GenerateReports reports = new GenerateReports();
                     Date date = ((JXDatePicker)params[1]).getDate();
-                    reports.setResultSets(reportController.getReportsByDate(date));
+                    reports.setResultSets(reportController.getReportsByDateRange(Utils.getDateNow(), date));
                     reports.build();
                     OutputReports outputReports = new OutputReports(reports.getDataSource());
                     outputReports.buildReport();

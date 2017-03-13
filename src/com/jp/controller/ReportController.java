@@ -5,7 +5,9 @@
  */
 package com.jp.controller;
 
+import com.jp.dao.ReportDAO;
 import com.jp.dao.ReportDAOImpl;
+import com.jp.dao.ReportExtDAOImpl;
 import java.sql.ResultSet;
 import java.util.Date;
 
@@ -21,7 +23,23 @@ public class ReportController {
         reportDAOImpl = new ReportDAOImpl();
     }
     
+    /**
+     * Retrieve the transactions by a specific Date.
+     * @param date
+     * @return a ResultSet of Transaction
+     */
     public ResultSet getReportsByDate(Date date) {
         return reportDAOImpl.getReportsByDate(date);
     }
+    
+    /**
+     * Retrieve the transactions from a range of Date.
+     * @param from
+     * @param to
+     * @return a ResultSet of Transaction
+     */
+    public ResultSet getReportsByDateRange(Date from, Date to) {
+        return reportDAOImpl.getReportsByDateRange(from, to);
+    }
+    
 }

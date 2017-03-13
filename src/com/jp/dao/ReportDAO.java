@@ -15,5 +15,5 @@ import java.util.Date;
 public interface ReportDAO {
     
     public ResultSet getReportsByDate(Date date);
-
+    
 }

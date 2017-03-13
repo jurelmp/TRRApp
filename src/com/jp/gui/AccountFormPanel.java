@@ -6,6 +6,7 @@
 package com.jp.gui;
 
 import com.jp.model.Account;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
@@ -30,6 +31,11 @@ public class AccountFormPanel extends JPanel implements ActionListener {
     private boolean isInsert = false;
 
     public AccountFormPanel() {
+        
+        Dimension dimension = getPreferredSize();
+        dimension.height = 150;
+        setPreferredSize(dimension);
+        setMinimumSize(dimension);
         
         currentAccount = new Account();
         
@@ -61,6 +67,7 @@ public class AccountFormPanel extends JPanel implements ActionListener {
         add(updateButton);
         add(saveButton);
         add(cancelButton);
+        
     }
     
     public void setAccountForm(Account account) {

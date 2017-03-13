@@ -5,7 +5,6 @@
  */
 package com.jp.reports;
 
-import com.jp.model.Contracts;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
@@ -51,7 +50,7 @@ public class GenerateReports {
 //                "amount", "description", "type");
 
         DRDataSource dataSource = new DRDataSource("name", "id", "reference_no", "date", "payee", 
-                "deposit", "payment", "description");
+                "deposit", "payment", "is_clear");
         
         try {
             while (resultSets.next()) {
@@ -66,7 +65,7 @@ public class GenerateReports {
                         resultSets.getString(TransactionEntry.COL_PAYEE),
                         new BigDecimal(resultSets.getDouble(TransactionEntry.COL_AMOUNT)),
                         null,
-                        resultSets.getString(TransactionEntry.COL_DESCRIPTION));
+                        resultSets.getBoolean(TransactionEntry.COL_IS_CLEAR));
                 } else if (type == TransactionType.payment) {
                     dataSource.add(
                         resultSets.getString(AccountEntry.COL_NAME),
@@ -76,7 +75,7 @@ public class GenerateReports {
                         resultSets.getString(TransactionEntry.COL_PAYEE),
                         null,
                         new BigDecimal(resultSets.getDouble(TransactionEntry.COL_AMOUNT)),
-                        resultSets.getString(TransactionEntry.COL_DESCRIPTION));
+                        resultSets.getBoolean(TransactionEntry.COL_IS_CLEAR));
                 }
                 
             }
