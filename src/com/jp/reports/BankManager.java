@@ -30,6 +30,7 @@ import static net.sf.dynamicreports.report.builder.DynamicReports.type;
 import static net.sf.dynamicreports.report.builder.DynamicReports.sbt;
 import static net.sf.dynamicreports.report.builder.DynamicReports.type;
 import static net.sf.dynamicreports.report.builder.DynamicReports.exp;
+import static net.sf.dynamicreports.report.builder.DynamicReports.concatenatedReport;
 import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
 import static net.sf.dynamicreports.report.builder.DynamicReports.variable;
 import net.sf.dynamicreports.report.builder.VariableBuilder;
