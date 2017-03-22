@@ -21,6 +21,7 @@ public class Account implements Serializable {
     private String name;
     private Date dateCreated;
     private Date dateUpdated;
+    private boolean active;
 
     public Account() {
     }
@@ -85,9 +86,17 @@ public class Account implements Serializable {
         this.dateUpdated = dateUpdated;
     }
 
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
     @Override
     public String toString() {
-        return "Account{" + "id=" + id + ", code=" + code + ", name=" + name + ", dateCreated=" + dateCreated + ", dateUpdated=" + dateUpdated + '}';
+        return "Account{" + "id=" + id + ", code=" + code + ", name=" + name + ", dateCreated=" + dateCreated + ", dateUpdated=" + dateUpdated + ", active=" + active + '}';
     }
-    
+        
 }

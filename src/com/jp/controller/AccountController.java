@@ -48,4 +48,8 @@ public class AccountController {
     public List<Account> insertAll(List<Account> accounts) {
         return accountDAOImpl.insertAll(accounts);
     }
+
+    public void setAccountActive(Account account) {
+        accountDAOImpl.setAccountActive(account);
+    }
 }

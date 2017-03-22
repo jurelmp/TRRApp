@@ -17,7 +17,7 @@ import javax.swing.table.AbstractTableModel;
 public class TransactionsTableModel extends AbstractTableModel {
     
     private List<Transaction> transactions = new ArrayList<>();
-    private String[] columnNames = {"#", "REF", "DATE", "PAYEE", "AMOUNT", "TYPE", "CLEAR"};
+    private String[] columnNames = {"#", "REF", "DATE", "PAYEE", "DEPOSIT", "PAYMENT", "CLEAR"};
 
     @Override
     public int getRowCount() {
@@ -48,9 +48,9 @@ public class TransactionsTableModel extends AbstractTableModel {
             case 3:
                 return transaction.getPayee();
             case 4:
-                return transaction.getAmount();
+                return transaction.getDeposit();
             case 5:
-                return transaction.getType();
+                return transaction.getPayment();
             case 6:
                 return transaction.isClear();
         }
@@ -69,6 +69,8 @@ public class TransactionsTableModel extends AbstractTableModel {
             case 0:
                 return Integer.class;
             case 4:
+                return Double.class;
+            case 5:
                 return Double.class;
             case 6:
                 return Boolean.class;
@@ -103,7 +105,7 @@ public class TransactionsTableModel extends AbstractTableModel {
     }
     
     public void addRow(Transaction transaction) {
-        this.transactions.add(transaction);
+        this.transactions.add(0, transaction);
 //        this.fireTableDataChanged();
     }
 

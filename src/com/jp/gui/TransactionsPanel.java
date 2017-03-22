@@ -56,7 +56,7 @@ public class TransactionsPanel extends JPanel {
 //                    System.out.println(accountsTable.getValueAt(accountsTable.getSelectedRow(), -1));
                     
 //                    Account selected = (Account) accountsTable.getValueAt(accountsTable.getSelectedRow(), -1);
-                    Transaction selected = (Transaction) transactionsTableModel.getTransactionRow(transactionsTable.getSelectedRow());
+                    Transaction selected = (Transaction) transactionsTableModel.getTransactionRow(transactionsTable.convertRowIndexToModel(transactionsTable.getSelectedRow()));
                     
                     if (transactionsSelectionListener != null) {
                         transactionsSelectionListener.transactionSelected(selected, transactionsTable.getSelectedRow());
@@ -76,7 +76,7 @@ public class TransactionsPanel extends JPanel {
             @Override
             public void tableChanged(TableModelEvent e) {
                 if (transactionsTable.getSelectedRow() > -1) {
-                    Transaction selected = (Transaction) transactionsTableModel.getTransactionRow(transactionsTable.getSelectedRow());
+                    Transaction selected = (Transaction) transactionsTableModel.getTransactionRow(transactionsTable.convertRowIndexToModel(transactionsTable.getSelectedRow()));
 //                    System.out.println(selected);
                     if (transactionClearActionListener != null) {
                         transactionClearActionListener.valueChanged(selected);

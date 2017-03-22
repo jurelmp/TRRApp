@@ -16,7 +16,8 @@ public interface TransactionFormActionListener {
     public static final int MODE_INSERT = 1;
     public static final int MODE_UPDATE = 2;
     
-    void buttonSaveClicked(Transaction transaction, int mode);
+    void buttonSaveClicked(Transaction transaction);
+    void buttonUpdateClicked(Transaction transaction);
     void buttonRemoveClicked(Transaction transaction, int rowIndex);
     
 }

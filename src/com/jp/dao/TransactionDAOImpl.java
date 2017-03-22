@@ -47,7 +47,7 @@ public class TransactionDAOImpl implements TransactionDAO{
         List<Transaction> transactions = new ArrayList<>();
         try {
             statement = conn.createStatement();
-            String query = "SELECT * FROM " + TransactionEntry.TABLE_NAME + " ORDER BY " + TransactionEntry.COL_DATE;
+            String query = "SELECT * FROM " + TransactionEntry.TABLE_NAME + " ORDER BY " + TransactionEntry.COL_DATE + " DESC";
             resultSet = statement.executeQuery(query);
             
             while (resultSet.next()) {                
@@ -66,7 +66,7 @@ public class TransactionDAOImpl implements TransactionDAO{
         try {
             preparedStatement = conn.prepareStatement("SELECT * FROM " + TransactionEntry.TABLE_NAME +
                     " WHERE " + TransactionEntry.COL_ACCOUNT_ID + " = ?" +
-                    " ORDER BY " + TransactionEntry.COL_DATE);
+                    " ORDER BY " + TransactionEntry.COL_DATE + " DESC");
             preparedStatement.setInt(1, account.getId());
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -84,7 +84,7 @@ public class TransactionDAOImpl implements TransactionDAO{
         try {
             preparedStatement = conn.prepareStatement("SELECT * FROM " + TransactionEntry.TABLE_NAME +
                     " WHERE " + TransactionEntry.COL_ACCOUNT_ID + " = ?" +
-                    " ORDER BY " + TransactionEntry.COL_DATE);
+                    " ORDER BY " + TransactionEntry.COL_DATE + " DESC");
             preparedStatement.setInt(1, account.getId());
             preparedStatement.setString(2, Utils.formatDate(date));
             resultSet = preparedStatement.executeQuery();
@@ -126,9 +126,9 @@ public class TransactionDAOImpl implements TransactionDAO{
                     TransactionEntry.COL_REF_NO + ", " + 
                     TransactionEntry.COL_DATE + ", " + 
                     TransactionEntry.COL_PAYEE + ", " + 
-                    TransactionEntry.COL_AMOUNT + ", " + 
-                    TransactionEntry.COL_DESCRIPTION + "," + 
-                    TransactionEntry.COL_TYPE + "," + 
+                    TransactionEntry.COL_DEPOSIT + ", " +
+                    TransactionEntry.COL_PAYMENT + ", " +
+                    TransactionEntry.COL_DESCRIPTION + "," +
                     TransactionEntry.COL_IS_CLEAR + "," + 
                     TransactionEntry.COL_DATE_CREATED + "," + 
                     TransactionEntry.COL_DATE_UPDATED + ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
@@ -137,9 +137,9 @@ public class TransactionDAOImpl implements TransactionDAO{
             preparedStatement.setString(col++, transaction.getReference());
             preparedStatement.setDate(col++, Utils.formatSqlDate(transaction.getDate()));
             preparedStatement.setString(col++, transaction.getPayee());
-            preparedStatement.setDouble(col++, transaction.getAmount());
+            preparedStatement.setDouble(col++, transaction.getDeposit());
+            preparedStatement.setDouble(col++, transaction.getPayment());
             preparedStatement.setString(col++, transaction.getDesc());
-            preparedStatement.setString(col++, transaction.getType().name());
             preparedStatement.setBoolean(col++, transaction.isClear());
             preparedStatement.setDate(col++, Utils.formatSqlDate(Utils.getDateNow()));
             preparedStatement.setDate(col, Utils.formatSqlDate(Utils.getDateNow()));
@@ -168,9 +168,9 @@ public class TransactionDAOImpl implements TransactionDAO{
                     " SET " + TransactionEntry.COL_REF_NO + " = ?, " +
                     TransactionEntry.COL_DATE + " = ?, " +
                     TransactionEntry.COL_PAYEE + " = ?, " +
-                    TransactionEntry.COL_AMOUNT + " = ?, " +
+                    TransactionEntry.COL_DEPOSIT + " = ?, " +
+                    TransactionEntry.COL_PAYMENT + " = ?, " +
                     TransactionEntry.COL_DESCRIPTION + " = ?, " +
-                    TransactionEntry.COL_TYPE + " = ?, " +
                     TransactionEntry.COL_IS_CLEAR + " = ?, " + 
                     TransactionEntry.COL_DATE_UPDATED + " = ? WHERE " + TransactionEntry.COL_ID + " = ?");
             
@@ -178,9 +178,9 @@ public class TransactionDAOImpl implements TransactionDAO{
             preparedStatement.setString(col++, transaction.getReference());
             preparedStatement.setDate(col++, Utils.formatSqlDate(transaction.getDate()));
             preparedStatement.setString(col++, transaction.getPayee());
-            preparedStatement.setDouble(col++, transaction.getAmount());
+            preparedStatement.setDouble(col++, transaction.getDeposit());
+            preparedStatement.setDouble(col++, transaction.getPayment());
             preparedStatement.setString(col++, transaction.getDesc());
-            preparedStatement.setString(col++, transaction.getType().name());
             preparedStatement.setBoolean(col++, transaction.isClear());
             preparedStatement.setDate(col++, Utils.formatSqlDate(Utils.getDateNow()));
             preparedStatement.setInt(col, transaction.getId());
@@ -221,9 +221,9 @@ public class TransactionDAOImpl implements TransactionDAO{
         transaction.setReference(resultSet.getString(TransactionEntry.COL_REF_NO));
         transaction.setDate(resultSet.getDate(TransactionEntry.COL_DATE));
         transaction.setPayee(resultSet.getString(TransactionEntry.COL_PAYEE));
-        transaction.setAmount(resultSet.getDouble(TransactionEntry.COL_AMOUNT));
+        transaction.setDeposit(resultSet.getDouble(TransactionEntry.COL_DEPOSIT));
+        transaction.setPayment(resultSet.getDouble(TransactionEntry.COL_PAYMENT));
         transaction.setDesc(resultSet.getString(TransactionEntry.COL_DESCRIPTION));
-        transaction.setType(TransactionType.valueOf(resultSet.getString(TransactionEntry.COL_TYPE)));
         transaction.setClear(resultSet.getBoolean(TransactionEntry.COL_IS_CLEAR));
         transaction.setDateCreated(resultSet.getDate(TransactionEntry.COL_DATE_CREATED));
         transaction.setDateUpdated(resultSet.getDate(TransactionEntry.COL_DATE_UPDATED));
@@ -235,6 +235,7 @@ public class TransactionDAOImpl implements TransactionDAO{
         
         for (Transaction transaction : transactions) {
             int id = insertTransactionn(transaction);
+            System.out.println(id);
             temps.add(getTransactionById(id));
         }
         

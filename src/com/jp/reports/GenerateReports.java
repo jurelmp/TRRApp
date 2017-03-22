@@ -14,7 +14,6 @@ import net.sf.jasperreports.engine.JRDataSource;
 
 import com.jp.model.Contracts.TransactionEntry;
 import com.jp.model.Contracts.AccountEntry;
-import com.jp.model.TransactionType;
 import java.math.BigDecimal;
 
 /**
@@ -54,29 +53,16 @@ public class GenerateReports {
         
         try {
             while (resultSets.next()) {
-                TransactionType type = TransactionType.valueOf(resultSets.getString(TransactionEntry.COL_TYPE));
                 
-                if (type == TransactionType.deposit) {
-                    dataSource.add(
-                        resultSets.getString(AccountEntry.COL_NAME),
-                        String.valueOf(resultSets.getInt(TransactionEntry.COL_ID)),
-                        resultSets.getString(TransactionEntry.COL_REF_NO),
-                        resultSets.getDate(TransactionEntry.COL_DATE),
-                        resultSets.getString(TransactionEntry.COL_PAYEE),
-                        new BigDecimal(resultSets.getDouble(TransactionEntry.COL_AMOUNT)),
-                        null,
-                        resultSets.getBoolean(TransactionEntry.COL_IS_CLEAR));
-                } else if (type == TransactionType.payment) {
-                    dataSource.add(
-                        resultSets.getString(AccountEntry.COL_NAME),
-                        String.valueOf(resultSets.getInt(TransactionEntry.COL_ID)),
-                        resultSets.getString(TransactionEntry.COL_REF_NO),
-                        resultSets.getDate(TransactionEntry.COL_DATE),
-                        resultSets.getString(TransactionEntry.COL_PAYEE),
-                        null,
-                        new BigDecimal(resultSets.getDouble(TransactionEntry.COL_AMOUNT)),
-                        resultSets.getBoolean(TransactionEntry.COL_IS_CLEAR));
-                }
+                dataSource.add(
+                    resultSets.getString(AccountEntry.COL_CODE),
+                    String.valueOf(resultSets.getInt(TransactionEntry.COL_ID)),
+                    resultSets.getString(TransactionEntry.COL_REF_NO),
+                    resultSets.getDate(TransactionEntry.COL_DATE),
+                    resultSets.getString(TransactionEntry.COL_PAYEE),
+                    new BigDecimal(resultSets.getDouble(TransactionEntry.COL_DEPOSIT)),
+                    new BigDecimal(resultSets.getDouble(TransactionEntry.COL_PAYMENT)),
+                    resultSets.getBoolean(TransactionEntry.COL_IS_CLEAR));
                 
             }
         } catch (SQLException ex) {
@@ -84,5 +70,5 @@ public class GenerateReports {
         }
         this.dataSource = dataSource;
     }
-    
+
 }

@@ -8,8 +8,10 @@ package com.jp.controller;
 import com.jp.dao.ReportDAO;
 import com.jp.dao.ReportDAOImpl;
 import com.jp.dao.ReportExtDAOImpl;
+import com.jp.model.AccountSummary;
 import java.sql.ResultSet;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -42,4 +44,7 @@ public class ReportController {
         return reportDAOImpl.getReportsByDateRange(from, to);
     }
     
+    public List<AccountSummary> getAccountsSummary(Date preparedDate, Date nextBankingDate) {
+        return reportDAOImpl.getAccountsSummary(preparedDate, nextBankingDate);
+    }
 }

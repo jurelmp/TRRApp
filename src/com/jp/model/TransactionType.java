@@ -11,7 +11,8 @@ package com.jp.model;
  */
 public enum TransactionType {
     payment("Payment"),
-    deposit("Deposit");
+    deposit("Deposit"),
+    both("P/D");
     
     private String text;
     

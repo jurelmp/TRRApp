@@ -24,8 +24,8 @@ import com.jp.utils.Utils;
  *
  * @author JurelP
  */
-public class AccountDAOImpl implements AccountDAO{
-    
+public class AccountDAOImpl implements AccountDAO {
+
     private Database db;
     private Connection conn;
     private PreparedStatement preparedStatement;
@@ -43,8 +43,8 @@ public class AccountDAOImpl implements AccountDAO{
     public Account getAccountById(int id) {
         Account account = new Account();
         try {
-            preparedStatement = conn.prepareStatement("SELECT * FROM " + 
-                    AccountEntry.TABLE_NAME + " WHERE " + AccountEntry.COL_ID + " = ?");
+            preparedStatement = conn.prepareStatement("SELECT * FROM "
+                    + AccountEntry.TABLE_NAME + " WHERE " + AccountEntry.COL_ID + " = ?");
             preparedStatement.setInt(1, id);
             resultSet = preparedStatement.executeQuery();
 //            System.out.println(resultSet.next());
@@ -56,7 +56,7 @@ public class AccountDAOImpl implements AccountDAO{
                 account.setDateUpdated(resultSet.getDate(AccountEntry.COL_DATE_UPDATED));
 //                System.out.println(resultSet.getString(Contracts.AccountEntry.COL_CODE));
             }
-            
+
         } catch (SQLException ex) {
             Logger.getLogger(AccountDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
@@ -75,13 +75,14 @@ public class AccountDAOImpl implements AccountDAO{
         try {
             statement = conn.createStatement();
             resultSet = statement.executeQuery("SELECT * FROM " + AccountEntry.TABLE_NAME);
-            while (resultSet.next()) {                
+            while (resultSet.next()) {
                 Account acc = new Account();
                 acc.setId(resultSet.getInt(AccountEntry.COL_ID));
                 acc.setCode(resultSet.getString(AccountEntry.COL_CODE));
                 acc.setName(resultSet.getString(AccountEntry.COL_NAME));
                 acc.setDateCreated(resultSet.getDate(AccountEntry.COL_DATE_CREATED));
                 acc.setDateUpdated(resultSet.getDate(AccountEntry.COL_DATE_UPDATED));
+                acc.setActive(resultSet.getBoolean(AccountEntry.COL_ACTIVE));
                 accounts.add(acc);
             }
         } catch (SQLException e) {
@@ -94,25 +95,25 @@ public class AccountDAOImpl implements AccountDAO{
     public Account insertAccount(Account account) {
         account.setDateCreated(Utils.getDateNow());
         account.setDateUpdated(Utils.getDateNow());
-        
+
         try {
-            preparedStatement = conn.prepareStatement("INSERT INTO " + AccountEntry.TABLE_NAME +
-                    " (" + AccountEntry.COL_CODE + ", " +
-                    AccountEntry.COL_NAME + ", " +
-                    AccountEntry.COL_DATE_CREATED + ", " +
-                    AccountEntry.COL_DATE_UPDATED + ") VALUES (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+            preparedStatement = conn.prepareStatement("INSERT INTO " + AccountEntry.TABLE_NAME
+                    + " (" + AccountEntry.COL_CODE + ", "
+                    + AccountEntry.COL_NAME + ", "
+                    + AccountEntry.COL_DATE_CREATED + ", "
+                    + AccountEntry.COL_DATE_UPDATED + ") VALUES (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, account.getCode());
             preparedStatement.setString(2, account.getName());
             preparedStatement.setDate(3, Utils.formatSqlDate(account.getDateCreated()));
             preparedStatement.setDate(4, Utils.formatSqlDate(account.getDateUpdated()));
-            
+
             int result = preparedStatement.executeUpdate();
-            
+
             ResultSet rs = preparedStatement.getGeneratedKeys();
             if (rs.next()) {
                 account = getAccountById(rs.getInt(1));
             }
-            
+
         } catch (SQLException ex) {
             Logger.getLogger(AccountDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -128,34 +129,36 @@ public class AccountDAOImpl implements AccountDAO{
     public boolean updateAccount(Account account) {
         int result = 0;
         account.setDateUpdated(Utils.getDateNow());
-        try { 
-            preparedStatement = conn.prepareStatement("UPDATE " + AccountEntry.TABLE_NAME +
-                    " SET " + AccountEntry.COL_CODE + " = ?, " +
-                    AccountEntry.COL_NAME + " = ?, " +
-                    AccountEntry.COL_DATE_UPDATED + " = ? WHERE " + 
-                    AccountEntry.COL_ID + " = ?");
+        try {
+            preparedStatement = conn.prepareStatement("UPDATE " + AccountEntry.TABLE_NAME
+                    + " SET " + AccountEntry.COL_CODE + " = ?, "
+                    + AccountEntry.COL_NAME + " = ?, "
+                    + AccountEntry.COL_DATE_UPDATED + " = ?, "
+                    + AccountEntry.COL_ACTIVE + " = ? WHERE "
+                    + AccountEntry.COL_ID + " = ?");
             preparedStatement.setString(1, account.getCode());
             preparedStatement.setString(2, account.getName());
             preparedStatement.setDate(3, Utils.formatSqlDate(account.getDateUpdated()));
-            preparedStatement.setInt(4, account.getId());
-            
+            preparedStatement.setBoolean(4, account.isActive());
+            preparedStatement.setInt(5, account.getId());
+
             result = preparedStatement.executeUpdate();
         } catch (SQLException ex) {
             Logger.getLogger(AccountDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
         return result > 0;
     }
-    
+
     @Override
     public Account getAccountByCode(String code) {
         Account account = new Account();
         boolean flag = false;
         try {
-            preparedStatement = conn.prepareStatement("SELECT * FROM " + 
-                    AccountEntry.TABLE_NAME + " WHERE " + AccountEntry.COL_CODE + " LIKE ?");
-            preparedStatement.setString(1,code + "%");
+            preparedStatement = conn.prepareStatement("SELECT * FROM "
+                    + AccountEntry.TABLE_NAME + " WHERE " + AccountEntry.COL_CODE + " LIKE ?");
+            preparedStatement.setString(1, code + "%");
             resultSet = preparedStatement.executeQuery();
-            
+
             if (resultSet.next()) {
                 account.setId(resultSet.getInt(AccountEntry.COL_ID));
                 account.setCode(resultSet.getString(AccountEntry.COL_CODE));
@@ -164,7 +167,7 @@ public class AccountDAOImpl implements AccountDAO{
                 account.setDateUpdated(resultSet.getDate(AccountEntry.COL_DATE_UPDATED));
                 flag = true;
             }
-            
+
         } catch (SQLException ex) {
             Logger.getLogger(AccountDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
@@ -176,17 +179,21 @@ public class AccountDAOImpl implements AccountDAO{
         }
         return flag ? account : null;
     }
-    
+
     public List<Account> insertAll(List<Account> accounts) {
         List<Account> temp = new ArrayList<>();
-        
+
         for (Account account : accounts) {
             if (getAccountByCode(account.getCode()) == null) {
                 temp.add(this.insertAccount(account));
             }
         }
-        
+
         return temp;
     }
-    
+
+    public void setAccountActive(Account account) {
+        updateAccount(account);
+    }
+
 }

@@ -19,8 +19,8 @@ public class Transaction {
     private String payee;
     private String desc;
     private Date date;
-    private double amount;
-    private TransactionType type;
+    private double deposit;
+    private double payment;
     private boolean clear;
     private Date dateCreated;
     private Date dateUpdated;
@@ -28,42 +28,43 @@ public class Transaction {
     public Transaction() {
     }
 
-    public Transaction(int accountId, String reference, String payee, String desc, Date date, double amount, 
-            TransactionType type, boolean clear, Date dateCreated, Date dateUpdated) {
+    public Transaction(int accountId, String reference, String payee, 
+            String desc, Date date, double deposit, double payment, boolean clear, Date dateCreated, Date dateUpdated) {
         this.reference = reference;
         this.payee = payee;
         this.desc = desc;
         this.date = date;
-        this.amount = amount;
-        this.type = type;
+        this.deposit = deposit;
+        this.payment = payment;
         this.clear = clear;
         this.dateCreated = dateCreated;
         this.dateUpdated = dateUpdated;
         this.accountId = accountId;
     }
 
-    public Transaction(int accountId, int id, String reference, String payee, String desc, Date date, double amount, 
-            TransactionType type, boolean clear, Date dateCreated, Date dateUpdated) {
+    public Transaction(int accountId, int id, String reference, String payee, 
+            String desc, Date date, double deposit, double payment, boolean clear, Date dateCreated, Date dateUpdated) {
         this.id = id;
         this.reference = reference;
         this.payee = payee;
         this.desc = desc;
         this.date = date;
-        this.amount = amount;
-        this.type = type;
+        this.deposit = deposit;
+        this.payment = payment;
         this.clear = clear;
         this.dateCreated = dateCreated;
         this.dateUpdated = dateUpdated;
         this.accountId = accountId;
     }
 
-    public Transaction(int id, String ref, String payee, double amount, String desc, Date date, TransactionType type, boolean clear) {
+    public Transaction(int id, String ref, String payee, double deposit, double payment,
+            String desc, Date date, boolean clear) {
         this.accountId = id;
         this.reference = ref;
         this.payee = payee;
-        this.amount = amount;
+        this.deposit = deposit;
+        this.payment = payment;
         this.date = date;
-        this.type = type;
         this.clear = clear;
         this.desc = desc;
     }
@@ -116,22 +117,22 @@ public class Transaction {
         this.date = date;
     }
 
-    public double getAmount() {
-        return amount;
+    public double getDeposit() {
+        return deposit;
     }
 
-    public void setAmount(double amount) {
-        this.amount = amount;
+    public void setDeposit(double deposit) {
+        this.deposit = deposit;
     }
 
-    public TransactionType getType() {
-        return type;
+    public double getPayment() {
+        return payment;
     }
 
-    public void setType(TransactionType type) {
-        this.type = type;
+    public void setPayment(double payment) {
+        this.payment = payment;
     }
-
+    
     public boolean isClear() {
         return clear;
     }
@@ -158,9 +159,7 @@ public class Transaction {
 
     @Override
     public String toString() {
-        return "Transaction{" + "accountId=" + accountId + ", id=" + id + ", reference=" + reference + ", payee=" + payee + ", desc=" + desc + ", date=" + date + ", amount=" + amount + ", type=" + type + ", clear=" + clear + ", dateCreated=" + dateCreated + ", dateUpdated=" + dateUpdated + '}';
+        return "Transaction{" + "accountId=" + accountId + ", id=" + id + ", reference=" + reference + ", payee=" + payee + ", desc=" + desc + ", date=" + date + ", deposit=" + deposit + ", payment=" + payment + ", clear=" + clear + ", dateCreated=" + dateCreated + ", dateUpdated=" + dateUpdated + '}';
     }
-    
-    
     
 }

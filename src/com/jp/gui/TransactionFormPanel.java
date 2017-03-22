@@ -7,7 +7,6 @@ package com.jp.gui;
 
 import com.jp.model.Account;
 import com.jp.model.Transaction;
-import com.jp.model.TransactionType;
 import com.jp.utils.Utils;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -21,13 +20,12 @@ import java.text.DecimalFormat;
 import java.util.Date;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -43,12 +41,12 @@ public class TransactionFormPanel extends JPanel implements ActionListener{
     
     private JPanel formPanel, buttonsPanel;
     private JButton newButton, saveButton, updateButton, removeButton, cancelButton; 
-    private JLabel transactionNoLabel, refLabel, dateLabel, payeeLabel, amountLabel, actionLabel, clearLabel, descLabel;
+    private JLabel transactionNoLabel, refLabel, dateLabel, payeeLabel, depositLabel, paymentLabel, clearLabel, descLabel;
     private JTextField transactionNoField, refField, dateField, payeeField;
-    private JFormattedTextField amountField;
+    private JFormattedTextField depositField, paymentField;
     private JTextArea descField;
-    private ButtonGroup typeBtnGroup;
-    private JRadioButton depositRdioBtn, paymentRdioBtn;
+//    private ButtonGroup typeBtnGroup;
+//    private JCheckBox depositRdioBtn, paymentRdioBtn;
     private JCheckBox clearCheckBox;
     
     private JXDatePicker datePicker;
@@ -96,29 +94,35 @@ public class TransactionFormPanel extends JPanel implements ActionListener{
         refLabel = new JLabel("Ref");
         dateLabel = new JLabel("Date");
         payeeLabel = new JLabel("Payee");
-        amountLabel = new JLabel("Amount");
-        actionLabel = new JLabel("Action");
+        depositLabel = new JLabel("Deposit");
+        paymentLabel = new JLabel("Payment");
         clearLabel = new JLabel("Clear");
         descLabel = new JLabel("Remarks (Optional)");
         // Fields
         transactionNoField = new JTextField(15);
-        transactionNoField.setEnabled(false);
+        transactionNoField.setEditable(false);
         refField = new JTextField(15);
         dateField = new JTextField(15);
         datePicker = new JXDatePicker(Utils.getDateNow());
         payeeField = new JTextField(15);
-        amountField = new JFormattedTextField();
-        amountField.setColumns(15);
-        amountField.setFormatterFactory(new DefaultFormatterFactory(new NumberFormatter(amountDecimalFormat)));
-        amountField.setHorizontalAlignment(JTextField.TRAILING);
-        depositRdioBtn = new JRadioButton(TransactionType.deposit.name());
-        paymentRdioBtn = new JRadioButton(TransactionType.payment.name());
-        depositRdioBtn.setActionCommand("deposit");
-        paymentRdioBtn.setActionCommand("payment");
-        depositRdioBtn.setSelected(true);
-        typeBtnGroup = new ButtonGroup();
-        typeBtnGroup.add(depositRdioBtn);
-        typeBtnGroup.add(paymentRdioBtn);
+        payeeField.setHorizontalAlignment(JTextField.LEFT);
+        depositField = new JFormattedTextField();
+        depositField.setColumns(15);
+        depositField.setFormatterFactory(new DefaultFormatterFactory(new NumberFormatter(amountDecimalFormat)));
+        depositField.setHorizontalAlignment(JTextField.TRAILING);
+        paymentField = new JFormattedTextField();
+        paymentField.setColumns(15);
+        paymentField.setFormatterFactory(new DefaultFormatterFactory(new NumberFormatter(amountDecimalFormat)));
+        paymentField.setHorizontalAlignment(JTextField.TRAILING);
+//        depositRdioBtn = new JCheckBox(TransactionType.deposit.name());
+//        paymentRdioBtn = new JCheckBox(TransactionType.payment.name());
+//        depositRdioBtn.setActionCommand("deposit");
+//        paymentRdioBtn.setActionCommand("payment");
+//        depositRdioBtn.setSelected(true);
+//        paymentRdioBtn.setSelected(true);
+//        typeBtnGroup = new ButtonGroup();
+//        typeBtnGroup.add(depositRdioBtn);
+//        typeBtnGroup.add(paymentRdioBtn);
         clearCheckBox = new JCheckBox("Clear");
         descField = new JTextArea(5, 15);
         
@@ -170,7 +174,6 @@ public class TransactionFormPanel extends JPanel implements ActionListener{
         formPanel.add(dateLabel, gbc);
         gbc.gridx++;
         gbc.anchor = GridBagConstraints.LINE_START;
-//        formPanel.add(dateField, gbc);
         formPanel.add(datePicker, gbc);
         
         // Row
@@ -183,10 +186,10 @@ public class TransactionFormPanel extends JPanel implements ActionListener{
         formPanel.add(payeeField, gbc);
         gbc.gridx++;
         gbc.anchor = GridBagConstraints.LINE_END;
-        formPanel.add(amountLabel, gbc);
+        formPanel.add(depositLabel, gbc);
         gbc.gridx++;
         gbc.anchor = GridBagConstraints.LINE_START;
-        formPanel.add(amountField, gbc);
+        formPanel.add(depositField, gbc);
         
         // Row
         gbc.gridy++;
@@ -200,14 +203,14 @@ public class TransactionFormPanel extends JPanel implements ActionListener{
         gbc.gridx++;
         gbc.gridheight = 1;
         gbc.anchor = GridBagConstraints.LINE_END;
-        formPanel.add(actionLabel, gbc);
+        formPanel.add(paymentLabel, gbc);
         gbc.gridx++;
         gbc.anchor = GridBagConstraints.LINE_START;
-        formPanel.add(depositRdioBtn, gbc);
+        formPanel.add(paymentField, gbc);
         
         // Row
-        gbc.gridy++;
-        formPanel.add(paymentRdioBtn, gbc);
+//        gbc.gridy++;
+//        formPanel.add(paymentRdioBtn, gbc);
         
         // Row
         gbc.gridy++;
@@ -233,37 +236,47 @@ public class TransactionFormPanel extends JPanel implements ActionListener{
         String ref = refField.getText().trim();
         Date date = new Date(datePicker.getDate().getTime());
         String payee = payeeField.getText().trim();
-//        double amount = amountDecimalFormat.parse(amountField.getText()).doubleValue();
-        double amount = amountField.getValue()!= null ? ((Number) amountField.getValue()).doubleValue() : 0.0;
+        double deposit = depositField.getValue() != null ? ((Number) depositField.getValue()).doubleValue() : 0.00;
+        double payment = paymentField.getValue() != null ? ((Number) paymentField.getValue()).doubleValue() : 0.00;
         String desc = descField.getText().trim();
-        TransactionType type = TransactionType.valueOf(typeBtnGroup.getSelection().getActionCommand());
         boolean clear = clearCheckBox.isSelected();
         
-        if (currentAccount == null && currentTransaction == null) {
-            return null;
-        }
+//        if (currentAccount == null && currentTransaction == null) {
+//            return null;
+//        }
+//        
+//        if (update) {
+//            return new Transaction( 0, ref, payee, deposit, payment, desc, date, clear);
+//        }
+//        
+//        if (currentAccount != null) {
+//            return new Transaction( currentAccount.getId(), ref, payee, deposit, payment, desc, date, clear);
+//        }
+//        
+//        return null;
         
-        if (update) {
-            return new Transaction( 0, ref, payee, amount, desc, date, type, clear);
-        }
-        
-        if (currentAccount != null) {
-            return new Transaction( currentAccount.getId(), ref, payee, amount, desc, date, type, clear);
-        }
-        
-        return null;
+        return new Transaction( 0, ref, payee, deposit, payment, desc, date, clear);
     }
         
-    private void getUpdatedValues() {
-        Transaction t = extractDataFromForm();
+    private void updateCurrentTransaction() {
+//        Transaction t = extractDataFromForm();
+
+        String ref = refField.getText().trim();
+        Date date = new Date(datePicker.getDate().getTime());
+        String payee = payeeField.getText().trim();
+        double deposit = depositField.getValue() != null ? ((Number) depositField.getValue()).doubleValue() : 0.00;
+        double payment = paymentField.getValue() != null ? ((Number) paymentField.getValue()).doubleValue() : 0.00;
+        String desc = descField.getText().trim();
+        boolean clear = clearCheckBox.isSelected();
         
          if (update) {
-            currentTransaction.setReference(t.getReference());
-            currentTransaction.setDate(Utils.formatSqlDate(t.getDate()));
-            currentTransaction.setAmount(t.getAmount());
-            currentTransaction.setDesc(t.getDesc());
-            currentTransaction.setType(t.getType());
-            currentTransaction.setClear(t.isClear());
+            currentTransaction.setReference(ref);
+            currentTransaction.setDate(date);
+            currentTransaction.setPayee(payee);
+            currentTransaction.setDeposit(deposit);
+            currentTransaction.setPayment(payment);
+            currentTransaction.setDesc(desc);
+            currentTransaction.setClear(clear);
         }
     }
 
@@ -284,36 +297,34 @@ public class TransactionFormPanel extends JPanel implements ActionListener{
             transactionNoField.setText(String.valueOf(currentTransaction.getId()));
             refField.setText(currentTransaction.getReference());
             payeeField.setText(currentTransaction.getPayee());
-            amountField.setValue(currentTransaction.getAmount());
+            depositField.setValue(currentTransaction.getDeposit());
+            paymentField.setValue(currentTransaction.getPayment());
             descField.setText(currentTransaction.getDesc());
             clearCheckBox.setSelected(currentTransaction.isClear());
-            depositRdioBtn.setSelected(currentTransaction.getType() == TransactionType.deposit);
-            paymentRdioBtn.setSelected(currentTransaction.getType() == TransactionType.payment);
             datePicker.setDate(currentTransaction.getDate());
         }
     }
     
     public void enableFields(boolean flag) {
 //        transactionNoField.setEnabled(flag);
-        refField.setEnabled(flag);
-        payeeField.setEnabled(flag);
-        amountField.setEnabled(flag);
-        descField.setEnabled(flag);
-        datePicker.setEnabled(flag);
+        refField.setEditable(flag);
+        payeeField.setEditable(flag);
+        depositField.setEditable(flag);
+        paymentField.setEditable(flag);
+        descField.setEditable(flag);
+        datePicker.setEditable(flag);
         clearCheckBox.setEnabled(flag);
-        depositRdioBtn.setEnabled(flag);
-        paymentRdioBtn.setEnabled(flag);
     }
     
     private void clearFields() {
         transactionNoField.setText(null);
         refField.setText(null);
         payeeField.setText(null);
-        amountField.setText(null);
+        depositField.setText(null);
+        paymentField.setText(null);
         descField.setText(null);
         datePicker.setDate(Utils.getDateNow());
         clearCheckBox.setSelected(false);
-        depositRdioBtn.setSelected(true);
     }
     
     private void enableButtons(boolean... flags) {
@@ -337,13 +348,30 @@ public class TransactionFormPanel extends JPanel implements ActionListener{
        } else if (clicked == saveButton) {
            if (listener != null) {
                
+               
                if (!update) {
-                   listener.buttonSaveClicked(extractDataFromForm(), TransactionFormActionListener.MODE_INSERT);
+                   if (currentAccount.getId() == 0) {
+                       JOptionPane.showMessageDialog(this, 
+                               "Please select an account.", 
+                               "Error Saving Item", 
+                               JOptionPane.ERROR_MESSAGE);
+                   } else {
+                       Transaction transTemp = extractDataFromForm();
+                       transTemp.setAccountId(currentAccount.getId());
+                       listener.buttonSaveClicked(transTemp);
+                   }
+                   
                } else {
-                   getUpdatedValues();
-                   listener.buttonSaveClicked(currentTransaction, TransactionFormActionListener.MODE_UPDATE);
-                   update = false;
+                   updateCurrentTransaction();
+                   listener.buttonUpdateClicked(currentTransaction);
                }
+//               if (!update) {
+//                   listener.buttonSaveClicked(extractDataFromForm(), TransactionFormActionListener.MODE_INSERT);
+//               } else {
+//                   getUpdatedValues();
+//                   listener.buttonSaveClicked(currentTransaction, TransactionFormActionListener.MODE_UPDATE);
+//                   update = false;
+//               }
                enableFields(false);
 //               update = true;
                enableButtons(true, false, false, false, false);
@@ -373,10 +401,9 @@ public class TransactionFormPanel extends JPanel implements ActionListener{
         refField.setFont(font);
         dateField.setFont(font);
         payeeField.setFont(font);
-        amountField.setFont(font);
+        depositField.setFont(font);
+        paymentField.setFont(font);
         descField.setFont(font);
-        depositRdioBtn.setFont(font);
-        paymentRdioBtn.setFont(font);
         clearCheckBox.setFont(font);
     }
 }

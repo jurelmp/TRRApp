@@ -6,6 +6,7 @@
 package com.jp.controller;
 
 import com.jp.model.Database;
+import com.jp.utils.Utils;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -14,6 +15,7 @@ import java.net.URL;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.io.FileUtils;
@@ -38,39 +40,40 @@ public class BackupController {
         
     }
     
-//    public void createBackup(String path) {
-//        
-//        try {
-//            String paramName = "BACKUPDIR";
-//            String storedProc = "CALL SYSCS_UTIL.SYSCS_BACKUP_DATABASE(?)";
-//            callableStatement = conn.prepareCall(storedProc);
-//            callableStatement.setString(1, path);
-//            System.out.println(callableStatement.execute());
-//        } catch (SQLException ex) {
-//            System.out.println(ex.getMessage());
-//            Logger.getLogger(BackupController.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//    }
-    
-    public void createBackup(String path) {
+    public boolean createBackup() {
+        boolean flag = false;
         try {
-            String source = "/database/petrolog";
+            //        File file = new File("");
+            //        String sourcePath = file.getAbsolutePath();
+            //        System.out.println(sourcePath);
+            //        Date date = new Date();
+            //        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yy_HH-mm-SS");
+            //        String backupDirectory = sourcePath + "/database/backups/" + dateFormat.format(date);
+            //        
+            //	String sql = "CALL SYSCS_UTIL.SYSCS_BACKUP_DATABASE(?)";
+            //	CallableStatement cs = conn.prepareCall(sql);
+            //	cs.setString(1, backupDirectory);
+            //	cs.execute();
+            //	cs.close();
+
+            File file = new File("");
+            String sourcePath = file.getAbsolutePath();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yy_HH-mm-SS");
+            String backupVer = dateFormat.format(Utils.getDateNow());
+            String backupDirectory = sourcePath + "/database/backups/" + backupVer;
+
+            String sql = "CALL SYSCS_UTIL.SYSCS_BACKUP_DATABASE(?)";
+            CallableStatement callableStatement = conn.prepareCall(sql);
+            callableStatement.setString(1, backupDirectory);
             
-            URL url = this.getClass().getResource(source);
-            System.out.println(url);
-            File fileSource = new File(url.toURI());
+            boolean result = !callableStatement.execute();
             
-            System.out.println(fileSource.toPath());
-            
-//        try {
-//            File fileSource = new File(new URI(source));
-//            File fileDest = new File(new URI(path));
-//            FileUtils.copyDirectory(new File(source), new File(path));
-//        } catch (IOException | URISyntaxException ex) {
-//            Logger.getLogger(BackupController.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-        } catch (URISyntaxException ex) {
+            callableStatement.close();
+        } catch (SQLException ex) {
             Logger.getLogger(BackupController.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return flag;
     }
+    
+    
 }

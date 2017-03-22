@@ -10,10 +10,16 @@ import java.awt.FontFormatException;
 import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import javax.swing.ImageIcon;
+import javax.swing.text.DefaultFormatterFactory;
+import javax.swing.text.NumberFormatter;
+import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
+import net.sf.dynamicreports.report.builder.style.FontBuilder;
+import net.sf.dynamicreports.report.builder.style.StyleBuilder;
 
 /**
  *
@@ -60,5 +66,30 @@ public class Utils {
     
     public static Date getDateNow() {
         return new Date();
+    }
+    
+    public static String humanDate(Date date) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+        return dateFormat.format(date);
+    }
+    
+    public static DefaultFormatterFactory createDecimalFormat() {
+        DecimalFormat decimalFormat = new DecimalFormat("#,###.00");
+        return new DefaultFormatterFactory(new NumberFormatter(decimalFormat));
+    }
+    
+    public static StyleBuilder normalTextBuilder(int size) {
+        FontBuilder normalFont = stl.font("Times New Roman", false, false, 8);
+        StyleBuilder normalText = stl.style(normalFont);
+        return normalText;
+    }
+    
+    public static StyleBuilder normalTextBuilder() {
+        return normalTextBuilder(8);
+    }
+    
+    public static String formatDecimal(double val) {
+        DecimalFormat decimalFormat = new DecimalFormat("#,###.00");
+        return decimalFormat.format(val);
     }
 }
