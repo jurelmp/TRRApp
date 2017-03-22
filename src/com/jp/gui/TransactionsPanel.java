@@ -8,6 +8,9 @@ package com.jp.gui;
 import com.jp.model.Account;
 import com.jp.model.Transaction;
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -19,6 +22,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
 
 /**
  *
@@ -86,6 +91,25 @@ public class TransactionsPanel extends JPanel {
                 
             }
         });
+        
+        TableCellRenderer tableCellRenderer = new DefaultTableCellRenderer() {
+            
+            private static final long serialVersionUID = 1L;
+            
+            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy");
+
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, 
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+                
+                if (value instanceof Date) {
+                    value = sdf.format(value);
+                }
+                return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            }
+        };
+        
+        transactionsTable.getColumnModel().getColumn(2).setCellRenderer(tableCellRenderer);
         
         // Add the components to the panel
         add(new JScrollPane(transactionsTable), BorderLayout.CENTER);
