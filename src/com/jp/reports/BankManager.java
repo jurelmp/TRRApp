@@ -31,6 +31,7 @@ import static net.sf.dynamicreports.report.builder.DynamicReports.sbt;
 import static net.sf.dynamicreports.report.builder.DynamicReports.type;
 import static net.sf.dynamicreports.report.builder.DynamicReports.exp;
 import static net.sf.dynamicreports.report.builder.DynamicReports.concatenatedReport;
+import static net.sf.dynamicreports.report.builder.DynamicReports.margin;
 import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
 import static net.sf.dynamicreports.report.builder.DynamicReports.variable;
 import net.sf.dynamicreports.report.builder.VariableBuilder;
@@ -41,6 +42,7 @@ import net.sf.dynamicreports.report.builder.style.StyleBuilder;
 import net.sf.dynamicreports.report.builder.subtotal.AggregationSubtotalBuilder;
 import net.sf.dynamicreports.report.builder.subtotal.SubtotalBuilders;
 import net.sf.dynamicreports.report.constant.Calculation;
+import net.sf.dynamicreports.report.constant.HorizontalTextAlignment;
 import net.sf.dynamicreports.report.datasource.DRDataSource;
 import net.sf.dynamicreports.report.definition.ReportParameters;
 import net.sf.dynamicreports.report.exception.DRException;
@@ -67,6 +69,12 @@ public class BankManager {
 
     private final FontBuilder normalFont = stl.font("Times New Roman", false, false, 8);
     private final StyleBuilder normalText = stl.style(normalFont);
+    
+    
+    private SubReportAccounts subReportAccounts;
+    private SubReportOtherFunds subReportOtherFunds;
+    private SubReportOnDateFunds subReportOnDateFunds;
+    private SubReportAdditionalFunds subReportAdditionalFunds;
 
     private VariableBuilder<BigDecimal> actualSum, preliminarySum, otherFundsSum, onDateFundsSum, additionalFundsSum;
 
@@ -113,10 +121,10 @@ public class BankManager {
         System.out.println(this.additionalFunds);
         System.out.println("End Generating Reports...");
 
-        SubReportAccounts subReportAccounts = new SubReportAccounts(this.accountSummaries, this.preparedDate, this.nextBankingDate);
-        SubReportOtherFunds subReportOtherFunds = new SubReportOtherFunds(othersFunds);
-        SubReportOnDateFunds subReportOnDateFunds = new SubReportOnDateFunds(onDateFunds);
-        SubReportAdditionalFunds subReportAdditionalFunds = new SubReportAdditionalFunds(additionalFunds);
+        subReportAccounts = new SubReportAccounts(this.accountSummaries, this.preparedDate, this.nextBankingDate);
+        subReportOtherFunds = new SubReportOtherFunds(othersFunds);
+        subReportOnDateFunds = new SubReportOnDateFunds(onDateFunds);
+        subReportAdditionalFunds = new SubReportAdditionalFunds(additionalFunds);
         subreportData.add(new SubreportData(subReportAccounts.getTitle(), subReportAccounts.getColumns(), subReportAccounts.getDataSource()));
         subreportData.add(new SubreportData(subReportOtherFunds.getTitle(), subReportOtherFunds.getColumns(), subReportOtherFunds.getDataSource()));
         subreportData.add(new SubreportData(subReportOnDateFunds.getTitle(), subReportOnDateFunds.getColumns(), subReportOnDateFunds.getDataSource()));
@@ -132,26 +140,58 @@ public class BankManager {
 
         try {
 
-            report.addField("title", String.class);
-            report.addField("columns", List.class);
-            report.addField("data", DRDataSource.class);
+//            report.addField("title", String.class);
+//            report.addField("columns", List.class);
+//            report.addField("data", DRDataSource.class);
+//
+//            report
+//                    .title(cmp.text("Prepare On: "
+//                            + Utils.humanDate(preparedDate)
+//                            + "\nNext Banking Day: " + Utils.humanDate(nextBankingDate)).setStyle(normalText))
+//                    .detail(subreportBuilder.setStyle(normalText), cmp.verticalGap(20))
+//                    .setDataSource(subreportData)
+//                    .summary(cmp.text("Actual:\t" + Utils.formatDecimal(actual) +
+//                            "\nPreliminary:\t" + Utils.formatDecimal(prelim) +
+//                            "\nSub-total of Other Funding Needs:\t" + Utils.formatDecimal(others) +
+//                            "\nTotal Funding Needs:\t" + Utils.formatDecimal(others) +
+//                            "\nBal forwarded:\t" + Utils.formatDecimal(getExcessDeficit()) +
+//                            "\nTotal Funding Resource:\t" + Utils.formatDecimal(getTotalFundingResource()) +
+//                            "\nExcess/(Deficit):\t" + Utils.formatDecimal(getExcessDeficit()) +
+//                            "\nExcess/ (Lacking):\t" + Utils.formatDecimal(getExcessLacking())))
+//                    .pageFooter(Templates.footerComponent)
+//                    .setTemplate(Templates.reportTemplate)
+//                    .show(false);
 
             report
-                    .title(cmp.text("Prepare On: "
-                            + Utils.humanDate(preparedDate)
-                            + "\nNext Banking Day: " + Utils.humanDate(nextBankingDate)).setStyle(normalText))
-                    .detail(subreportBuilder.setStyle(normalText), cmp.verticalGap(20))
-                    .setDataSource(subreportData)
-                    .summary(cmp.text("Actual:\t" + Utils.formatDecimal(actual) +
-                            "\nPreliminary:\t" + Utils.formatDecimal(prelim) +
-                            "\nSub-total of Other Funding Needs:\t" + Utils.formatDecimal(others) +
-                            "\nTotal Funding Needs:\t" + Utils.formatDecimal(others) +
-                            "\nBal forwarded:\t" + Utils.formatDecimal(getExcessDeficit()) +
-                            "\nTotal Funding Resource:\t" + Utils.formatDecimal(getTotalFundingResource()) +
-                            "\nExcess/(Deficit):\t" + Utils.formatDecimal(getExcessDeficit()) +
-                            "\nExcess/ (Lacking):\t" + Utils.formatDecimal(getExcessLacking())))
-                    .pageFooter(Templates.footerComponent)
-                    .setTemplate(Templates.reportTemplate)
+                    .title(cmp.text("PLC Report").setStyle(Templates.bold12CenteredStyle))
+                    .summary(
+                    cmp.verticalList(
+                            cmp.subreport(subReportAccounts.getReport()),
+                            cmp.verticalGap(20),
+                            cmp.subreport(subReportOtherFunds.getReport()),
+                            cmp.verticalGap(20),
+                            cmp.horizontalList(
+                                    cmp.subreport(subReportOnDateFunds.getReport()),
+                                    cmp.horizontalGap(15),
+                                    cmp.subreport(subReportAdditionalFunds.getReport())
+                            ),
+                            cmp.verticalGap(20),
+                            cmp.horizontalList(
+                                    cmp.text("Total Funding Resource").setStyle(Utils.topBorderBuilder()),
+                                    cmp.text(Utils.formatDecimal(getTotalFundingResource())).setHorizontalTextAlignment(HorizontalTextAlignment.RIGHT).setStyle(Utils.topBorderBuilder()),
+                                    cmp.horizontalGap(15),
+                                    cmp.text("Bal Forwarded").setStyle(Utils.topBorderBuilder()),
+                                    cmp.text(Utils.formatDecimal(getExcessDeficit())).setHorizontalTextAlignment(HorizontalTextAlignment.RIGHT).setStyle(Utils.topBorderBuilder())
+                            ),
+                            cmp.horizontalList(
+                                    cmp.text("Excess / (Deficit)").setStyle(Utils.topBorderBuilder()),
+                                    cmp.text(Utils.formatDecimal(getExcessDeficit())).setHorizontalTextAlignment(HorizontalTextAlignment.RIGHT).setStyle(Utils.topBorderBuilder()),
+                                    cmp.horizontalGap(15),
+                                    cmp.text("Excess (Lacking)").setStyle(Utils.topBorderBuilder()),
+                                    cmp.text(Utils.formatDecimal(getExcessLacking())).setHorizontalTextAlignment(HorizontalTextAlignment.RIGHT).setStyle(Utils.topBorderBuilder())
+                            )
+                    )
+            )
                     .show(false);
 
         } catch (DRException ex) {

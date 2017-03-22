@@ -11,9 +11,15 @@ import com.jp.utils.Utils;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import net.sf.dynamicreports.examples.Templates;
+import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
+import static net.sf.dynamicreports.report.builder.DynamicReports.cmp;
 import static net.sf.dynamicreports.report.builder.DynamicReports.col;
+import static net.sf.dynamicreports.report.builder.DynamicReports.report;
+import static net.sf.dynamicreports.report.builder.DynamicReports.sbt;
 import static net.sf.dynamicreports.report.builder.DynamicReports.type;
 import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
+import net.sf.dynamicreports.report.constant.HorizontalTextAlignment;
 import net.sf.dynamicreports.report.datasource.DRDataSource;
 import net.sf.jasperreports.engine.JRDataSource;
 
@@ -56,5 +62,26 @@ public class SubReportOnDateFunds {
         }
         
         return dataSource;
+    }
+    
+    public JasperReportBuilder getReport() {
+        JasperReportBuilder report = report();
+        
+        TextColumnBuilder<String> columnDetails = col.column("On Date Funds", "details", type.stringType()).setStyle(Utils.normalTextBuilder());
+        TextColumnBuilder<Double> columnAmount = col.column("Amount", "amount", type.doubleType()).setValueFormatter(new Utils.DecimalValueFormatter()).setStyle(Utils.normalTextBuilder());
+           
+        report.setColumnTitleStyle(Utils.boldTextBuilder().setHorizontalTextAlignment(HorizontalTextAlignment.RIGHT));
+        report.title(cmp.text("Additional Funds Available for Deposit"));
+        report.addColumn(
+                columnDetails,
+                columnAmount
+        );
+//        report.noData(cmp.text("There is no on date funds."));
+        report.subtotalsAtSummary(sbt.text("Total", columnDetails).setStyle(Utils.boldTextBuilder()).setStyle(Utils.topBorderBuilder()),
+                sbt.sum(columnAmount).setValueFormatter(new Utils.DecimalValueFormatter()).setStyle(Utils.boldTextBuilder()).setStyle(Utils.topBorderBuilder())
+        );
+        report.setDataSource(this.getDataSource());
+        
+        return report;
     }
 }

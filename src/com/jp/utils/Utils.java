@@ -17,9 +17,11 @@ import java.util.Locale;
 import javax.swing.ImageIcon;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
+import net.sf.dynamicreports.report.base.expression.AbstractValueFormatter;
 import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
 import net.sf.dynamicreports.report.builder.style.FontBuilder;
 import net.sf.dynamicreports.report.builder.style.StyleBuilder;
+import net.sf.dynamicreports.report.definition.ReportParameters;
 
 /**
  *
@@ -79,7 +81,7 @@ public class Utils {
     }
     
     public static StyleBuilder normalTextBuilder(int size) {
-        FontBuilder normalFont = stl.font("Times New Roman", false, false, 8);
+        FontBuilder normalFont = stl.font("Times New Roman", false, false, size);
         StyleBuilder normalText = stl.style(normalFont);
         return normalText;
     }
@@ -88,8 +90,29 @@ public class Utils {
         return normalTextBuilder(8);
     }
     
+    public static StyleBuilder boldTextBuilder() {
+        return normalTextBuilder(10).bold();
+    }
+    
+    public static StyleBuilder topBorderBuilder() {
+        return stl.style().setTopBorder(stl.pen1Point());
+    }
+    
+    
     public static String formatDecimal(double val) {
         DecimalFormat decimalFormat = new DecimalFormat("#,###.00");
         return decimalFormat.format(val);
+    }
+    
+    public static class DecimalValueFormatter extends AbstractValueFormatter<String, Number> {
+
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public String format(Number value, ReportParameters reportParameters) {
+            DecimalFormat decimalFormat = new DecimalFormat("#,###.00");
+            return decimalFormat.format(value);
+        }
+        
     }
 }
