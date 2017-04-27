@@ -105,7 +105,7 @@ public class TransactionsTableModel extends AbstractTableModel {
     }
     
     public void addRow(Transaction transaction) {
-        this.transactions.add(0, transaction);
+        this.transactions.add(transaction);
 //        this.fireTableDataChanged();
     }
 

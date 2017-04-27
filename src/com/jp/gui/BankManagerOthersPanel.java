@@ -6,6 +6,7 @@
 package com.jp.gui;
 
 import com.jp.model.Other;
+import com.jp.utils.Utils;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -64,7 +65,7 @@ public class BankManagerOthersPanel extends JPanel {
     }
     
     private void init() {
-        decimalFormat = new DecimalFormat("#,###.00");
+        decimalFormat = new DecimalFormat("#,##0.00");
         
         popupMenu = new JPopupMenu();
         deleteItem = new JMenuItem("Delete");
@@ -146,6 +147,8 @@ public class BankManagerOthersPanel extends JPanel {
                 }
             }
         });
+        
+        othersTable.getColumnModel().getColumn(1).setCellRenderer(Utils.getDecimalFromatTableCellRenderer());
         
         formPanel.add(detailsField);
         formPanel.add(amountField);

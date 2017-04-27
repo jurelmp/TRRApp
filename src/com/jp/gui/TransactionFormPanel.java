@@ -71,7 +71,7 @@ public class TransactionFormPanel extends JPanel implements ActionListener{
         setLayout(new BorderLayout());
         
         // Initialize the components
-        amountDecimalFormat = new DecimalFormat("#,###.00");
+        amountDecimalFormat = new DecimalFormat("#,##0.00");
         // Panes
         formPanel = new JPanel(new GridBagLayout());
         buttonsPanel = new JPanel();
@@ -195,11 +195,11 @@ public class TransactionFormPanel extends JPanel implements ActionListener{
         gbc.gridy++;
         gbc.gridx = 0;
         gbc.anchor = GridBagConstraints.LINE_END;
-        formPanel.add(descLabel, gbc);
+//        formPanel.add(descLabel, gbc);
         gbc.gridx++;
         gbc.gridheight = 3;
         gbc.anchor = GridBagConstraints.LINE_START;
-        formPanel.add(new JScrollPane(descField), gbc);
+//        formPanel.add(new JScrollPane(descField), gbc);
         gbc.gridx++;
         gbc.gridheight = 1;
         gbc.anchor = GridBagConstraints.LINE_END;
@@ -350,7 +350,7 @@ public class TransactionFormPanel extends JPanel implements ActionListener{
                
                
                if (!update) {
-                   if (currentAccount.getId() == 0) {
+                   if (currentAccount == null) {
                        JOptionPane.showMessageDialog(this, 
                                "Please select an account.", 
                                "Error Saving Item", 

@@ -67,7 +67,7 @@ public class ReportDAOImpl implements ReportDAO {
                 " FROM " + Contracts.AccountEntry.TABLE_NAME + " JOIN " + Contracts.TransactionEntry.TABLE_NAME +
                 " ON " + Contracts.AccountEntry.TABLE_NAME + "." + Contracts.AccountEntry.COL_ID + " = " + Contracts.TransactionEntry.TABLE_NAME + "." + Contracts.TransactionEntry.COL_ACCOUNT_ID +
                 " WHERE " + Contracts.TransactionEntry.TABLE_NAME + "." + Contracts.TransactionEntry.COL_IS_CLEAR + " = ? AND " + Contracts.TransactionEntry.TABLE_NAME + "." + Contracts.TransactionEntry.COL_DATE + " BETWEEN ? AND ?" +
-                " ORDER BY " + Contracts.TransactionEntry.TABLE_NAME + "." + Contracts.TransactionEntry.COL_DATE + " ASC";
+                " ORDER BY TRANSACTIONS.DATE, " + Contracts.AccountEntry.TABLE_NAME + "." + Contracts.AccountEntry.COL_CODE + " ASC";
         try {
             preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setBoolean(1, false);
@@ -80,7 +80,7 @@ public class ReportDAOImpl implements ReportDAO {
         }
         return resultSet;
     }
-    
+
     public List<AccountSummary> getAccountsSummary(Date preparedDate, Date nextBankingDate) {
         List<AccountSummary> summaries = new ArrayList<>();
         

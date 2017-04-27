@@ -6,6 +6,7 @@
 package com.jp.gui;
 
 import com.jp.model.AccountSummary;
+import com.jp.utils.Utils;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -67,6 +68,9 @@ public class BankManagerAccountsPanel extends JPanel {
         summary.add(accountsSummaryTotalLabel);
         summary.add(accountsSummaryActualTotalField);
         summary.add(accountsSummaryPreliminaryTotalField);
+        
+        accountsTable.getColumnModel().getColumn(1).setCellRenderer(Utils.getDecimalFromatTableCellRenderer());
+        accountsTable.getColumnModel().getColumn(2).setCellRenderer(Utils.getDecimalFromatTableCellRenderer());
         
         
         add(new JScrollPane(accountsTable), BorderLayout.CENTER);

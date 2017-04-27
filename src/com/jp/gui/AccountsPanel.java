@@ -87,7 +87,16 @@ public class AccountsPanel extends JPanel {
         this.accountsSelectionListener = listener;
     }
 
-    void setFirstSelected() {
-        this.accountsTable.setRowSelectionInterval(0, 0);
+//    void setFirstSelected() {
+//        this.accountsTable.setRowSelectionInterval(0, 0);
+//    }
+
+    void setTableSelection(int i) {
+        
+        ListSelectionModel listSelectionModel = accountsTable.getSelectionModel();
+        listSelectionModel.addSelectionInterval(i, i);
+//        this.accountsTable.addRowSelectionInterval(i, i);
+//        this.accountsTable.getSelectionModel().addSelectionInterval(i, i);
+//        this.accountsTable.getSelectionModel().setSelectionInterval(i, i);
     }
 }

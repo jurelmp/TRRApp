@@ -16,8 +16,11 @@ import static net.sf.dynamicreports.report.builder.DynamicReports.cmp;
 import static net.sf.dynamicreports.report.builder.DynamicReports.col;
 import static net.sf.dynamicreports.report.builder.DynamicReports.report;
 import static net.sf.dynamicreports.report.builder.DynamicReports.sbt;
+import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
 import static net.sf.dynamicreports.report.builder.DynamicReports.type;
 import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
+import net.sf.dynamicreports.report.builder.style.FontBuilder;
+import net.sf.dynamicreports.report.builder.style.StyleBuilder;
 import net.sf.dynamicreports.report.constant.HorizontalTextAlignment;
 import net.sf.dynamicreports.report.datasource.DRDataSource;
 import net.sf.jasperreports.engine.JRDataSource;
@@ -66,19 +69,47 @@ public class SubReportAdditionalFunds {
     public JasperReportBuilder getReport() {
         JasperReportBuilder report = report();
         
+        
+        FontBuilder hiddenFont = stl.font("Times New Roman", false, false, 0);
+        StyleBuilder hiddenStyle = stl.style(hiddenFont);
+        
         TextColumnBuilder<String> columnDetails = col.column("", "details", type.stringType()).setStyle(Utils.normalTextBuilder());
-        TextColumnBuilder<Double> columnAmount = col.column("Amount", "amount", type.doubleType()).setValueFormatter(new Utils.DecimalValueFormatter()).setStyle(Utils.normalTextBuilder());
+        TextColumnBuilder<Double> columnAmount = col.column("", "amount", type.doubleType()).setValueFormatter(new Utils.DecimalValueFormatter()).setStyle(Utils.normalTextBuilder());
            
-        report.setColumnTitleStyle(Utils.boldTextBuilder().setHorizontalTextAlignment(HorizontalTextAlignment.RIGHT));
+        report.setColumnTitleStyle(hiddenStyle.setHorizontalTextAlignment(HorizontalTextAlignment.RIGHT));
 //        report.title(cmp.text("Additional Funds Available for Deposit"));
         report.addColumn(
                 columnDetails,
                 columnAmount
         );
-        
-        report.subtotalsAtSummary(sbt.text("", columnDetails).setStyle(Utils.boldTextBuilder()).setStyle(Utils.topBorderBuilder()),
-                sbt.sum(columnAmount).setValueFormatter(new Utils.DecimalValueFormatter()).setStyle(Utils.boldTextBuilder()).setStyle(Utils.topBorderBuilder())
+        report.noData(
+                cmp.horizontalList(
+                        cmp.text("").setStyle(Utils.boldTextBuilder()).setStyle(Utils.topBorderBuilder()), 
+                        cmp.text("0.00").setStyle(Utils.boldTextBuilder()).setStyle(Utils.topBorderBuilder()).setHorizontalTextAlignment(HorizontalTextAlignment.RIGHT)
+                )
         );
+//        report.summary(
+//                cmp.text("").setStyle(stl.style().setBottomPadding(230))
+//        );
+//        report.subtotalsAtSummary(
+//                sbt.text("Total", columnDetails).setStyle(Utils.boldTextBuilder()).setStyle(Utils.topBorderBuilder()).setStyle(Utils.topPaddingBuilder()),
+//                sbt.sum(columnAmount).setValueFormatter(new Utils.DecimalValueFormatter()).setStyle(Utils.boldTextBuilder()).setStyle(Utils.topBorderBuilder()).setStyle(Utils.topPaddingBuilder())
+//        );
+
+//        report.summary(
+//                cmp.horizontalList(
+//                        cmp.text(""),
+//                        cmp.text(""),
+//                        cmp.text(""),
+//                        cmp.text(""),
+//                        cmp.text(""),
+//                        cmp.text(""),
+//                        cmp.text(""),
+//                        cmp.text(""),
+//                        cmp.text(""),
+//                        cmp.text("")
+//                )
+//        );
         report.setDataSource(this.getDataSource());
         
         return report;

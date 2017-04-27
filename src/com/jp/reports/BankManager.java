@@ -42,7 +42,9 @@ import net.sf.dynamicreports.report.builder.style.StyleBuilder;
 import net.sf.dynamicreports.report.builder.subtotal.AggregationSubtotalBuilder;
 import net.sf.dynamicreports.report.builder.subtotal.SubtotalBuilders;
 import net.sf.dynamicreports.report.constant.Calculation;
+import net.sf.dynamicreports.report.constant.ComponentPositionType;
 import net.sf.dynamicreports.report.constant.HorizontalTextAlignment;
+import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.datasource.DRDataSource;
 import net.sf.dynamicreports.report.definition.ReportParameters;
 import net.sf.dynamicreports.report.exception.DRException;
@@ -163,32 +165,60 @@ public class BankManager {
 //                    .show(false);
 
             report
-                    .title(cmp.text("PLC Report").setStyle(Templates.bold12CenteredStyle))
+//                    .title(cmp.text("PLC Report").setStyle(Templates.bold12CenteredStyle))
+                    .setPageMargin(margin(40))
+                    .setPageFormat(PageType.LETTER)
                     .summary(
                     cmp.verticalList(
-                            cmp.subreport(subReportAccounts.getReport()),
-                            cmp.verticalGap(20),
-                            cmp.subreport(subReportOtherFunds.getReport()),
+                            cmp.verticalGap(10),
+                            cmp.horizontalList(
+                                    cmp.horizontalGap(60),
+                                    cmp.subreport(subReportAccounts.getReport()).setFixedWidth(400),
+                                    cmp.horizontalGap(60)
+                            ),
                             cmp.verticalGap(20),
                             cmp.horizontalList(
+                                    cmp.horizontalGap(60),
+                                    cmp.subreport(subReportOtherFunds.getReport()).setFixedWidth(400),
+                                    cmp.horizontalGap(60)
+                            ),
+//                            cmp.subreport(subReportAccounts.getReport()).setFixedWidth(400).setStyle(stl.style().setHorizontalTextAlignment(HorizontalTextAlignment.CENTER)),
+//                            cmp.verticalGap(20),
+//                            cmp.subreport(subReportOtherFunds.getReport()).setFixedWidth(400).setStyle(stl.style().setHorizontalTextAlignment(HorizontalTextAlignment.CENTER)),
+                            cmp.verticalGap(20),
+                            
+                            cmp.horizontalList(
+                                    cmp.horizontalGap(60),
                                     cmp.subreport(subReportOnDateFunds.getReport()),
                                     cmp.horizontalGap(15),
-                                    cmp.subreport(subReportAdditionalFunds.getReport())
+                                    cmp.verticalList(
+                                            cmp.horizontalList(
+                                                    cmp.text("Bal Forwarded").setStyle(Utils.boldTextBuilder()),
+                                                    cmp.text(Utils.formatNegative(getExcessDeficit())).setHorizontalTextAlignment(HorizontalTextAlignment.RIGHT).setStyle(Utils.boldTextBuilder())
+                                            ),
+                                            cmp.subreport(subReportAdditionalFunds.getReport())
+                                    ),
+                                    cmp.horizontalGap(70)
+                                    
                             ),
-                            cmp.verticalGap(20),
+                            cmp.verticalGap(200),
                             cmp.horizontalList(
+                                    cmp.horizontalGap(60),
                                     cmp.text("Total Funding Resource").setStyle(Utils.topBorderBuilder()),
-                                    cmp.text(Utils.formatDecimal(getTotalFundingResource())).setHorizontalTextAlignment(HorizontalTextAlignment.RIGHT).setStyle(Utils.topBorderBuilder()),
+                                    cmp.text(Utils.formatNegative(getTotalFundingResource())).setHorizontalTextAlignment(HorizontalTextAlignment.RIGHT).setStyle(Utils.topBorderBuilder()),
                                     cmp.horizontalGap(15),
-                                    cmp.text("Bal Forwarded").setStyle(Utils.topBorderBuilder()),
-                                    cmp.text(Utils.formatDecimal(getExcessDeficit())).setHorizontalTextAlignment(HorizontalTextAlignment.RIGHT).setStyle(Utils.topBorderBuilder())
+                                    cmp.text(""),
+                                    cmp.text("").setHorizontalTextAlignment(HorizontalTextAlignment.RIGHT),
+                                    cmp.horizontalGap(70)
                             ),
                             cmp.horizontalList(
+                                    cmp.horizontalGap(60),
                                     cmp.text("Excess / (Deficit)").setStyle(Utils.topBorderBuilder()),
-                                    cmp.text(Utils.formatDecimal(getExcessDeficit())).setHorizontalTextAlignment(HorizontalTextAlignment.RIGHT).setStyle(Utils.topBorderBuilder()),
+                                    cmp.text(Utils.formatNegative(getExcessDeficit())).setHorizontalTextAlignment(HorizontalTextAlignment.RIGHT).setStyle(Utils.topBorderBuilder()),
                                     cmp.horizontalGap(15),
                                     cmp.text("Excess (Lacking)").setStyle(Utils.topBorderBuilder()),
-                                    cmp.text(Utils.formatDecimal(getExcessLacking())).setHorizontalTextAlignment(HorizontalTextAlignment.RIGHT).setStyle(Utils.topBorderBuilder())
+                                    cmp.text(Utils.formatNegative(getExcessLacking())).setHorizontalTextAlignment(HorizontalTextAlignment.RIGHT).setStyle(Utils.topBorderBuilder()),
+                                    cmp.horizontalGap(70)
                             )
                     )
             )

@@ -78,20 +78,20 @@ public class SubReportAccounts {
         
         report.title(cmp.text("").setStyle(Utils.normalTextBuilder()));
         
-        TextColumnBuilder<String> columnCode = col.column("Bank Code", "code", type.stringType()).setStyle(Utils.normalTextBuilder());
-        TextColumnBuilder<BigDecimal> columnActual = col.column("Actual\n" + Utils.humanDate(preparedDate), "actual", type.bigDecimalType()).setValueFormatter(new DecimalValueFormatter()).setStyle(Utils.normalTextBuilder()).setHorizontalTextAlignment(HorizontalTextAlignment.RIGHT);
-        TextColumnBuilder<BigDecimal> columnPrelim = col.column("Preliminary\n" + Utils.humanDate(nextBankingDate), "preliminary", type.bigDecimalType()).setValueFormatter(new DecimalValueFormatter()).setStyle(Utils.normalTextBuilder()).setHorizontalTextAlignment(HorizontalTextAlignment.RIGHT);
+        TextColumnBuilder<String> columnCode = col.column("", "code", type.stringType()).setStyle(Utils.normalTextBuilder()).setWidth(200);
+        TextColumnBuilder<BigDecimal> columnActual = col.column("Actual\n" + Utils.humanDate(preparedDate), "actual", type.bigDecimalType()).setValueFormatter(new DecimalValueFormatter()).setStyle(Utils.normalTextBuilder()).setHorizontalTextAlignment(HorizontalTextAlignment.RIGHT).setWidth(200);
+        TextColumnBuilder<BigDecimal> columnPrelim = col.column("Preliminary\n" + Utils.humanDate(nextBankingDate), "preliminary", type.bigDecimalType()).setValueFormatter(new DecimalValueFormatter()).setStyle(Utils.normalTextBuilder()).setHorizontalTextAlignment(HorizontalTextAlignment.RIGHT).setWidth(200);
         
         report.setColumnTitleStyle(Utils.boldTextBuilder().setHorizontalTextAlignment(HorizontalTextAlignment.RIGHT));
         
         report.addColumn(columnCode, columnActual, columnPrelim);
         report.subtotalsAtSummary(
-                sbt.text("Total", columnCode).setStyle(Utils.boldTextBuilder()).setStyle(Utils.topBorderBuilder()), 
-                sbt.sum(columnActual).setValueFormatter(new DecimalValueFormatter()).setStyle(Utils.boldTextBuilder()).setStyle(Utils.topBorderBuilder()), 
-                sbt.sum(columnPrelim).setValueFormatter(new DecimalValueFormatter()).setStyle(Utils.boldTextBuilder()).setStyle(Utils.topBorderBuilder()));
+                sbt.text("Total", columnCode).setStyle(Utils.boldTextBuilder()), 
+                sbt.sum(columnActual).setValueFormatter(new DecimalValueFormatter()).setStyle(Utils.boldTextBuilder()), 
+                sbt.sum(columnPrelim).setValueFormatter(new DecimalValueFormatter()).setStyle(Utils.boldTextBuilder()));
         report.setDataSource(this.getDataSource());
-//        report.setPageColumnsPerPage(2);
-//        report.setPageMargin(margin(10));
+        
+        report.setPageColumnsPerPage(1);
         
         return report;
     }

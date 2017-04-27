@@ -28,6 +28,7 @@ import net.sf.jasperreports.engine.JRDataSource;
  * @author JurelP
  */
 public class SubReportOnDateFunds {
+
     private String title;
     private List<TextColumnBuilder<?>> columns = new ArrayList<>();
     private List<OnDateFund> onDateFunds;
@@ -60,28 +61,36 @@ public class SubReportOnDateFunds {
                     odf.getAmount()
             );
         }
-        
+
         return dataSource;
     }
-    
+
     public JasperReportBuilder getReport() {
         JasperReportBuilder report = report();
-        
+
         TextColumnBuilder<String> columnDetails = col.column("On Date Funds", "details", type.stringType()).setStyle(Utils.normalTextBuilder());
         TextColumnBuilder<Double> columnAmount = col.column("Amount", "amount", type.doubleType()).setValueFormatter(new Utils.DecimalValueFormatter()).setStyle(Utils.normalTextBuilder());
-           
+
         report.setColumnTitleStyle(Utils.boldTextBuilder().setHorizontalTextAlignment(HorizontalTextAlignment.RIGHT));
-        report.title(cmp.text("Additional Funds Available for Deposit"));
+        report.title(cmp.text("Additional Funds Available for Deposit: ").setStyle(Utils.boldTextBuilder()));
         report.addColumn(
                 columnDetails,
                 columnAmount
         );
-//        report.noData(cmp.text("There is no on date funds."));
-        report.subtotalsAtSummary(sbt.text("Total", columnDetails).setStyle(Utils.boldTextBuilder()).setStyle(Utils.topBorderBuilder()),
-                sbt.sum(columnAmount).setValueFormatter(new Utils.DecimalValueFormatter()).setStyle(Utils.boldTextBuilder()).setStyle(Utils.topBorderBuilder())
+        report.noData(
+                cmp.verticalList(
+                        cmp.text("Additional Funds Available for Deposit: ").setStyle(Utils.boldTextBuilder()),
+                        cmp.horizontalList(
+                                cmp.text("On Date Funds").setStyle(Utils.boldTextBuilder()).setStyle(Utils.normalTextBuilder()),
+                                cmp.text("0.00").setStyle(Utils.boldTextBuilder()).setStyle(Utils.normalTextBuilder()).setHorizontalTextAlignment(HorizontalTextAlignment.RIGHT)
+                        )
+                )
         );
+//        report.subtotalsAtSummary(sbt.text("Total", columnDetails).setStyle(Utils.boldTextBuilder()).setStyle(Utils.topBorderBuilder()),
+//                sbt.sum(columnAmount).setValueFormatter(new Utils.DecimalValueFormatter()).setStyle(Utils.boldTextBuilder()).setStyle(Utils.topBorderBuilder())
+//        );
         report.setDataSource(this.getDataSource());
-        
+
         return report;
     }
 }

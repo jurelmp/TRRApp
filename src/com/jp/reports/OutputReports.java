@@ -10,10 +10,12 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.sf.dynamicreports.examples.Templates;
 import net.sf.dynamicreports.report.base.expression.AbstractSimpleExpression;
 import static net.sf.dynamicreports.report.builder.DynamicReports.cmp;
 import static net.sf.dynamicreports.report.builder.DynamicReports.col;
 import static net.sf.dynamicreports.report.builder.DynamicReports.grp;
+import static net.sf.dynamicreports.report.builder.DynamicReports.margin;
 import static net.sf.dynamicreports.report.builder.DynamicReports.report;
 import static net.sf.dynamicreports.report.builder.DynamicReports.sbt;
 import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
@@ -26,6 +28,7 @@ import net.sf.dynamicreports.report.builder.style.FontBuilder;
 import net.sf.dynamicreports.report.builder.style.StyleBuilder;
 import net.sf.dynamicreports.report.constant.BooleanComponentType;
 import net.sf.dynamicreports.report.constant.HorizontalTextAlignment;
+import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.definition.ReportParameters;
 import net.sf.dynamicreports.report.exception.DRException;
 import net.sf.jasperreports.engine.JRDataSource;
@@ -53,7 +56,9 @@ public class OutputReports {
     
     public void buildReport() {
         try {
-            FontBuilder normalFont = stl.font("Times New Roman", false, false, 8);
+            FontBuilder normalFont = stl.font("Times New Roman", false, false, 7);
+            FontBuilder headerFont = stl.font("Times New Roman", false, false, 9);
+            StyleBuilder headerText = stl.style(headerFont).setBold(Boolean.TRUE);
             StyleBuilder normalText = stl.style(normalFont);
             FontBuilder hiddenFont = stl.font("Times New Roman", false, false, 0);
             StyleBuilder topBorder = stl.style().setTopBorder(stl.pen1Point());
@@ -67,37 +72,46 @@ public class OutputReports {
                     .setBorder(stl.pen1Point())
                     /**.setBackgroundColor(Color.LIGHT_GRAY)*/;
             
-            TextColumnBuilder<String> dateBankCode = col.column("Account", new SimpleTextExpression());
+            TextColumnBuilder<String> dateBankCode = col.column("Account", new SimpleTextExpression()).setWidth(1);
             
             TextColumnBuilder<String> accountName = col.column("Account", "name", type.stringType()).setStyle(boldStyle).setStyle(noBottomPadding).setStyle(hiddenStyle);
-            TextColumnBuilder<String> transactionNo = col.column("#", "id", type.stringType()).setStyle(noBottomPadding);
-            TextColumnBuilder<String> referenceNo = col.column("Ref", "reference_no", type.stringType()).setHorizontalTextAlignment(HorizontalTextAlignment.CENTER).setWidth(70).setStyle(noBottomPadding);
             TextColumnBuilder<Date> date = col.column("Date", "date", type.dateType()).setHorizontalTextAlignment(HorizontalTextAlignment.LEFT).setStyle(boldStyle).setStyle(noBottomPadding).setStyle(hiddenStyle);
+//            TextColumnBuilder<String> transactionNo = col.column("#", "id", type.stringType()).setStyle(noBottomPadding);
+            TextColumnBuilder<String> referenceNo = col.column("Ref", "reference_no", type.stringType()).setHorizontalTextAlignment(HorizontalTextAlignment.CENTER).setWidth(70).setStyle(noBottomPadding);
+            
             TextColumnBuilder<String> payeeName = col.column("To/From", "payee", type.stringType()).setWidth(200).setStyle(noBottomPadding);
             TextColumnBuilder<BigDecimal> depositAmount = col.column("Deposit", "deposit", type.bigDecimalType()).setStyle(noBottomPadding);
             TextColumnBuilder<BigDecimal> paymentAmount = col.column("Payment", "payment", type.bigDecimalType()).setStyle(noBottomPadding);
 //            TextColumnBuilder<String> description = col.column("Description", "description", type.stringType());
 //            TextColumnBuilder<Boolean> isClear = col.column("Clr", "is_clear", type.booleanType());
-            BooleanColumnBuilder isClear = col.booleanColumn("Clr", "is_clear").setComponentType(BooleanComponentType.IMAGE_CHECKBOX_1).setWidth(20).setStyle(noBottomPadding);
-            
+            BooleanColumnBuilder isClear = col.booleanColumn("Clr", "is_clear").setComponentType(BooleanComponentType.IMAGE_CHECKBOX_1).setImageDimension(10, 10).setWidth(20).setStyle(noBottomPadding);
+            ColumnGroupBuilder columnAccount = grp.group(accountName);
             
             report()
 //                    .setTemplate(Templates.reportTemplate)
-                    .addPageHeader(cmp.text("Prepared on: " + Utils.humanDate(fromDate) + "\t\t\tFor Next Banking Day: " + Utils.humanDate(toDate)))
+                    .setPageMargin(margin(40))
+                    .setPageFormat(PageType.LETTER)
+                    .addPageHeader(
+                            cmp.horizontalList(
+                                    cmp.text("Prepared on: " + Utils.humanDate(fromDate)).setStyle(headerText),
+                                    cmp.text("For Next Banking Day: " + Utils.humanDate(toDate)).setStyle(headerText)
+                            )
+                    )
+//                            cmp.text("Prepared on: " + Utils.humanDate(fromDate) + "\t\t\tFor Next Banking Day: " + Utils.humanDate(toDate)).setStyle(Templates.bold12CenteredStyle))
                     .setColumnTitleStyle(columnTitleStyle)
                     .setDefaultFont(normalFont)
                     .setSubtotalStyle(boldStyle)
                     .columns(
-                            accountName,
-                            referenceNo,
                             date,
+                            accountName,
                             dateBankCode,
+                            referenceNo,
                             payeeName,
                             depositAmount,
                             paymentAmount,
                             isClear)
                     
-                    .groupBy(date, accountName, dateBankCode.setStyle(topBorder))
+                    .groupBy(date, accountName, dateBankCode)
                     .subtotalsAtFirstGroupFooter(sbt.text("Date Subtotal", payeeName).setStyle(topBorder), 
                             sbt.sum(depositAmount).setStyle(topBorder), 
                             sbt.sum(paymentAmount).setStyle(topBorder))
@@ -124,7 +138,7 @@ public class OutputReports {
 
         @Override
         public String evaluate(ReportParameters reportParameters) {
-            return Utils.humanDate(reportParameters.getValue("date")) + "  " + reportParameters.getValue("name");
+            return Utils.humanDate(reportParameters.getValue("date")) + "   " + reportParameters.getValue("name");
         }
         
     }

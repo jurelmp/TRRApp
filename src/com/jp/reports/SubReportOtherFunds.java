@@ -17,8 +17,10 @@ import static net.sf.dynamicreports.report.builder.DynamicReports.cmp;
 import static net.sf.dynamicreports.report.builder.DynamicReports.col;
 import static net.sf.dynamicreports.report.builder.DynamicReports.report;
 import static net.sf.dynamicreports.report.builder.DynamicReports.sbt;
+import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
 import static net.sf.dynamicreports.report.builder.DynamicReports.type;
 import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
+import net.sf.dynamicreports.report.builder.style.StyleBuilder;
 import net.sf.dynamicreports.report.constant.HorizontalTextAlignment;
 import net.sf.dynamicreports.report.datasource.DRDataSource;
 import net.sf.jasperreports.engine.JRDataSource;
@@ -67,16 +69,24 @@ public class SubReportOtherFunds {
     public JasperReportBuilder getReport() {
         JasperReportBuilder report = report();
         
-        TextColumnBuilder<String> columnOther = col.column("Details of other funding needs", "other", type.stringType()).setStyle(Utils.normalTextBuilder());
-        TextColumnBuilder<BigDecimal> columnAmount = col.column("Amount", "amount", type.bigDecimalType()).setValueFormatter(new Utils.DecimalValueFormatter()).setStyle(Utils.normalTextBuilder());
+        StyleBuilder bottomBorder = stl.style().setBottomBorder(stl.pen1Point());
         
-        report.setColumnTitleStyle(Utils.boldTextBuilder().setHorizontalTextAlignment(HorizontalTextAlignment.RIGHT));
+        TextColumnBuilder<String> columnOther = col.column("Details of other funding needs:", "other", type.stringType()).setStyle(Utils.normalTextBuilder()).setHorizontalTextAlignment(HorizontalTextAlignment.LEFT);
+        TextColumnBuilder<BigDecimal> columnAmount = col.column("", "amount", type.bigDecimalType()).setValueFormatter(new Utils.DecimalValueFormatter()).setStyle(Utils.normalTextBuilder()).setHorizontalTextAlignment(HorizontalTextAlignment.RIGHT);
         
+        report.setColumnTitleStyle(Utils.boldTextBuilder().setHorizontalTextAlignment(HorizontalTextAlignment.LEFT));
+        report.noData(
+                cmp.horizontalList(
+                        cmp.text("Other Funding Needs").setStyle(Utils.boldTextBuilder()).setStyle(Utils.topBorderBuilder()), 
+                        cmp.text("0.00").setStyle(Utils.boldTextBuilder()).setStyle(Utils.topBorderBuilder()).setHorizontalTextAlignment(HorizontalTextAlignment.RIGHT)
+                )
+        );
+        report.setColumnTitleStyle(Utils.boldTextBuilder());
         report.addColumn(columnOther, columnAmount);
         report.noData(Templates.createTitleComponent("No Other Funding Needs"), cmp.text("There is no other funding needs."));
         report.subtotalsAtSummary(
-                sbt.text("Sub-total of Other Funding Needs", columnOther).setStyle(Utils.boldTextBuilder()).setStyle(Utils.topBorderBuilder()),
-                sbt.sum(columnAmount).setValueFormatter(new Utils.DecimalValueFormatter()).setStyle(Utils.boldTextBuilder()).setStyle(Utils.topBorderBuilder())
+                sbt.text("Sub-total of Other Funding Needs", columnOther).setStyle(Utils.boldTextBuilder()),
+                sbt.sum(columnAmount).setValueFormatter(new Utils.DecimalValueFormatter()).setStyle(Utils.boldTextBuilder())
         );
         report.setDataSource(this.getDataSource());
         

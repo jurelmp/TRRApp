@@ -47,7 +47,7 @@ public class TransactionDAOImpl implements TransactionDAO{
         List<Transaction> transactions = new ArrayList<>();
         try {
             statement = conn.createStatement();
-            String query = "SELECT * FROM " + TransactionEntry.TABLE_NAME + " ORDER BY " + TransactionEntry.COL_DATE + " DESC";
+            String query = "SELECT * FROM " + TransactionEntry.TABLE_NAME + " ORDER BY " + TransactionEntry.COL_DATE + " ASC";
             resultSet = statement.executeQuery(query);
             
             while (resultSet.next()) {                
@@ -66,7 +66,7 @@ public class TransactionDAOImpl implements TransactionDAO{
         try {
             preparedStatement = conn.prepareStatement("SELECT * FROM " + TransactionEntry.TABLE_NAME +
                     " WHERE " + TransactionEntry.COL_ACCOUNT_ID + " = ?" +
-                    " ORDER BY " + TransactionEntry.COL_DATE + " DESC");
+                    " ORDER BY " + TransactionEntry.COL_DATE + " ASC");
             preparedStatement.setInt(1, account.getId());
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {

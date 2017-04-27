@@ -236,6 +236,21 @@ public class MainFrame extends JFrame {
                 if (option == JOptionPane.OK_OPTION) {
                     GenerateReports reports = new GenerateReports();
                     nextBankingDate = ((JXDatePicker)params[1]).getDate();
+                    
+                    
+                    /** Test Date */
+//                    Date p;
+//                    Date n;
+//                    try {
+//                        SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy");
+//                        String date1Str = "15-03-2017";
+//                        String date2Str = "16-03-2017";
+//                        p = sdf.parse(date1Str);
+//                        n = sdf.parse(date2Str);
+//                    } catch (Exception e) {
+//                    }
+                    /** */
+                    
                     reports.setResultSets(reportController.getReportsByDateRange(Utils.getDateNow(), nextBankingDate));
                     reports.build();
                     OutputReports outputReports = new OutputReports(reports.getDataSource());
@@ -367,7 +382,11 @@ public class MainFrame extends JFrame {
             }
         });
         
+        
+        
         accountsPanel.refresh();
+        
+        accountsPanel.setTableSelection(0);
         
         // Place the components to the frame
         add(toolbar, BorderLayout.PAGE_START);

@@ -208,6 +208,7 @@ public class BankManagerAdditionalPanel extends JPanel {
                 if (bMAdditionalEventListener != null) {
                     bMAdditionalEventListener.insert(odf);
                     refreshOnDate();
+                    onDateClearFields();
                 }
             }
         });
@@ -225,10 +226,14 @@ public class BankManagerAdditionalPanel extends JPanel {
                 
                 if (bMAdditionalEventListener != null) {
                     bMAdditionalEventListener.insert(af);
-                    refreshOnDate();
+                    refreshAdditional();
+                    additionalClearFields();
                 }
             }
         });
+        
+        onDateFundsTable.getColumnModel().getColumn(1).setCellRenderer(Utils.getDecimalFromatTableCellRenderer());
+        additionalFundsTable.getColumnModel().getColumn(1).setCellRenderer(Utils.getDecimalFromatTableCellRenderer());
         
         additionalFundsSummaryPanel.add(additionalFundsLabel);
         additionalFundsSummaryPanel.add(additionalFundsTotalField);
@@ -301,6 +306,16 @@ public class BankManagerAdditionalPanel extends JPanel {
     
     public double getAdditionalTotal() {
         return additionalFundsTableModel.getSum();
+    }
+    
+    private void onDateClearFields() {
+        onDateFundsDetailsField.setText("");
+        onDateFundsAmountField.setValue(0);
+    }
+    
+    private void additionalClearFields() {
+        additionalFundsDetailsField.setText("");
+        additionalFundsAmountField.setValue(0);
     }
     
     private class OnDateFundsTableModel extends AbstractTableModel {

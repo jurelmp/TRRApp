@@ -7,8 +7,12 @@ package com.jp.gui;
 
 import com.jp.model.Account;
 import com.jp.model.Transaction;
+import com.jp.utils.Utils;
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -16,14 +20,21 @@ import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.RowFilter;
 import javax.swing.border.Border;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 /**
  *
@@ -34,6 +45,8 @@ public class TransactionsPanel extends JPanel {
     private Account currentAccount;
     
     private JTable transactionsTable;
+    
+    private PlaceholderTextField filterField;
     
     private TransactionsTableModel transactionsTableModel;
     
@@ -52,6 +65,10 @@ public class TransactionsPanel extends JPanel {
         transactionsTable.setRowHeight(20);
         transactionsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         transactionsTable.setAutoCreateRowSorter(true);
+        
+        filterField = new PlaceholderTextField();
+        filterField.setPlaceholder("Filter by Item No / Ref / Date / Payee / Deposit / Payment.");
+        filterField.setFont(new Font("Arial", Font.PLAIN, 16));
         
         // Listeners
         transactionsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
@@ -92,27 +109,62 @@ public class TransactionsPanel extends JPanel {
             }
         });
         
-        TableCellRenderer tableCellRenderer = new DefaultTableCellRenderer() {
-            
-            private static final long serialVersionUID = 1L;
-            
-            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy");
+        filterField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                filterFieldActionPerformed(e);
+            }
 
             @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, 
-                    boolean isSelected, boolean hasFocus, int row, int column) {
-                
-                if (value instanceof Date) {
-                    value = sdf.format(value);
-                }
-                return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            public void removeUpdate(DocumentEvent e) {
+                filterFieldActionPerformed(e);
             }
-        };
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                filterFieldActionPerformed(e);
+            }
+        });
         
-        transactionsTable.getColumnModel().getColumn(2).setCellRenderer(tableCellRenderer);
+//        filterField.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                filterFieldActionPerformed(e);
+//            }
+//        });
+        
+//        TableCellRenderer tableCellRenderer = new DefaultTableCellRenderer() {
+//            
+//            private static final long serialVersionUID = 1L;
+//            
+//            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy");
+//
+//            @Override
+//            public Component getTableCellRendererComponent(JTable table, Object value, 
+//                    boolean isSelected, boolean hasFocus, int row, int column) {
+//                
+//                if (value instanceof Date) {
+//                    value = sdf.format(value);
+//                }
+//                return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+//            }
+//        };
+        
+        transactionsTable.getColumnModel().getColumn(0).setWidth(2);
+        transactionsTable.getColumnModel().getColumn(0).setMaxWidth(2);
+        transactionsTable.getColumnModel().getColumn(2).setCellRenderer(new DateFormatTableCellRenderer());
+        transactionsTable.getColumnModel().getColumn(4).setCellRenderer(Utils.getDecimalFromatTableCellRenderer());
+        transactionsTable.getColumnModel().getColumn(5).setCellRenderer(Utils.getDecimalFromatTableCellRenderer());
         
         // Add the components to the panel
+        add(filterField, BorderLayout.PAGE_START);
         add(new JScrollPane(transactionsTable), BorderLayout.CENTER);
+    }
+    
+    private void filterFieldActionPerformed(DocumentEvent event) {
+        TableRowSorter<TableModel> sorter = new TableRowSorter<>(((AbstractTableModel) transactionsTable.getModel()));
+        sorter.setRowFilter(RowFilter.regexFilter(filterField.getText()));
+        transactionsTable.setRowSorter(sorter);
     }
     
     public void setAccount(Account account) {
@@ -127,7 +179,15 @@ public class TransactionsPanel extends JPanel {
     
     public void addRow(Transaction t) {
         transactionsTableModel.addRow(t);
+        ListSelectionModel listSelectionModel = transactionsTable.getSelectionModel();
+        
         refresh();
+        
+        int row = transactionsTable.getRowCount();
+        
+        listSelectionModel.addSelectionInterval(row - 1, row - 1);
+        
+        transactionsTable.scrollRectToVisible(transactionsTable.getCellRect(row - 1, 0, true));
     }
     
     public void refresh() {
@@ -143,8 +203,9 @@ public class TransactionsPanel extends JPanel {
     }
 
     public void rowDeleted(int rowIndex) {
-        transactionsTableModel.rowDeleted(rowIndex);
         clearSelection();
+        transactionsTableModel.rowDeleted(rowIndex);
+        
         refresh();
     }
     
